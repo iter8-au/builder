@@ -17,7 +17,6 @@ $app->register(
 ```php
 $report = $app['service.report'];
 
-// Set the Agent and Team Leader Qualifies columns to be wider
 $report->setColumnWidths([
     1 => 30,
     2 => 15,
