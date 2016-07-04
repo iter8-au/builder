@@ -1,14 +1,14 @@
 {
-  "name": "iter8-au/builder",
+  "name": "iter8/builder",
+  "version": "0.0.5",
   "description": "A wrapper for the PHP Excel library to help you quickly build reports",
   "keywords": ["phpexcel", "reports"],
-  "homepage": "http://github.com/ter8-au/builder",
+  "homepage": "http://github.com/iter8-au/builder",
   "type": "library",
-  "license": "MIT",
   "authors": [
     {
       "name": "Dean Smith",
-      "email": "dean.smith@iter8.com.au",
+      "email": "dean@iter8.com.au",
       "homepage": "http://iter8.com.au"
     }
   ],

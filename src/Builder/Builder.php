@@ -37,9 +37,16 @@ class Builder
 
     private $title;
 
+    private $sheetTitles;
+
     private $description;
 
     private $filename;
+
+    /**
+     * @var array
+     */
+    private $sheets;
 
     /**
      * @var array
@@ -90,9 +97,96 @@ class Builder
         $objPHPExcel->getProperties()->setSubject($this->getTitle());
         $objPHPExcel->getProperties()->setDescription($this->getDescription());
 
-        $objPHPExcel->setActiveSheetIndex(0);
+        if ($this->hasSheets()) {
+            // Multiple sheets
+            $this->createSheets(
+                $objPHPExcel
+            );
+        } else {
+            // Single sheet - these will be an array and a string
+            $reportArray = $this->getData();
+            $sheetTitle = $this->getSheetTitles();
 
-        // Style settings for column headers
+            $objPHPExcel->setActiveSheetIndex(0);
+
+            $this->createSheet(
+                $objPHPExcel,
+                $reportArray,
+                $sheetTitle
+            );
+        }
+
+        // Output headers
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Content-Type: application/force-download");
+        header("Content-Type: application/octet-stream");
+        header("Content-Type: application/download");;
+        header("Content-Disposition: attachment;filename=" . $this->getFilename() . ".xlsx");
+        header("Content-Transfer-Encoding: binary ");
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        ob_end_clean();
+
+        // Write output then exit() to prevent page content being appended to .xlsx file
+        $filePath = $this->getReportCacheDir() . "\\" . rand(0, getrandmax()) . rand(0, getrandmax()) . ".tmp";
+        $objWriter->save($filePath);
+        readfile($filePath);
+        unlink($filePath);
+        exit();
+    }
+
+    /**
+     * @param $phpExcel
+     */
+    public function createSheets(&$phpExcel)
+    {
+        $sheets = $this->getSheets();
+
+        $titles = $this->getSheetTitles();
+
+        $totalSheets = count($sheets);
+        $sheetCount = 0;
+
+        if (empty($sheets) || !is_array($sheets)) {
+            throw new \UnexpectedValueException(
+                'Expected an array of sheets data but got an empty value or non-array.'
+            );
+        }
+
+        // We have to set the initial active sheet
+        $phpExcel->setActiveSheetIndex($sheetCount);
+
+        foreach ($sheets as $sheet) {
+            $this->createSheet(
+                $phpExcel,
+                $sheet,
+                $titles[$sheetCount]
+            );
+
+            // Only create a new sheet if we actually have a data array for it
+            if ($sheetCount < ($totalSheets - 1)) {
+                $phpExcel->createSheet();
+
+                // Increment the active sheet count and move to that sheet
+                $sheetCount++;
+                $phpExcel->setActiveSheetIndex($sheetCount);
+            }
+        }
+
+        // Finally switch back to the first sheet
+        $phpExcel->setActiveSheetIndex(0);
+
+        return;
+    }
+
+    public function createSheet(
+        &$phpExcel,
+        $data,
+        $title
+    ) {
+        // Style settings for agent headers
         // http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object
         $styleArray = array(
             'alignment' => array(
@@ -118,7 +212,7 @@ class Builder
 
             // Loop through all of our column values -  we only set values for columns that we actually have
             foreach ($this->getColumnWidths() as $columnKey => $columnWidth) {
-                $objPHPExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
+                $phpExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
             }
 
         }
@@ -130,12 +224,12 @@ class Builder
 
         // Build column headers
         $col = 0;
-        foreach (array_keys($reportArray[0]) as $key) {
+        foreach (array_keys($data[0]) as $key) {
             // Set the header value
-            $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $key);
+            $phpExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $key);
 
             // Apply header style to column headers
-            $objPHPExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
+            $phpExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
 
             $col++;
         }
@@ -143,15 +237,15 @@ class Builder
         $row++;
 
         // Output each record
-        foreach ($reportArray as $record) {
+        foreach ($data as $record) {
 
             $col = 0;
             foreach ($record as $column) {
-                $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $column);
+                $phpExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $column);
 
                 if ($this->hasColumnStylesForColumn($col)) {
                     // Apply style to column
-                    $objPHPExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray(
+                    $phpExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray(
                         $this->getPHPExcelColumnStylesForColumn($col)
                     );
                 }
@@ -163,28 +257,11 @@ class Builder
         }
 
         // Rename sheet
-        $objPHPExcel->getActiveSheet()->setTitle($this->getTitle());
+        $phpExcel->getActiveSheet()->setTitle($title);
 
-        // Output headers
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Content-Type: application/force-download");
-        header("Content-Type: application/octet-stream");
-        header("Content-Type: application/download");;
-        header("Content-Disposition: attachment;filename=" . $this->getFilename() . ".xlsx");
-        header("Content-Transfer-Encoding: binary ");
-
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        ob_end_clean();
-
-        // Write output then exit() to prevent page content being appended to .xlsx file
-        $filePath = $this->getReportCacheDir() . "\\" . rand(0, getrandmax()) . rand(0, getrandmax()) . ".tmp";
-        $objWriter->save($filePath);
-        readfile($filePath);
-        unlink($filePath);
-        exit();
+        return;
     }
+
 
     /**
      * TODO: Implement to output in CSV format but with an .xls extension to open in excel
@@ -483,5 +560,33 @@ class Builder
         $this->columnStyles = $columnStyles;
 
         return $this;
+    }
+
+
+    public function hasSheets()
+    {
+        $sheets = $this->sheets;
+
+        return !empty($sheets);
+    }
+
+    public function setSheets(array $sheets)
+    {
+        $this->sheets = $sheets;
+    }
+
+    public function getSheets()
+    {
+        return $this->sheets;
+    }
+
+    public function setSheetTitles($sheetTitles)
+    {
+        $this->sheetTitles = $sheetTitles;
+    }
+
+    public function getSheetTitles()
+    {
+        return $this->sheetTitles;
     }
 }

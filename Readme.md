@@ -4,6 +4,16 @@ A wrapper for the PHP Excel library to help you quickly build reports
 
 ## Example Usage
 
+
+```php
+$app->register(
+    new BuilderServiceProvider(),
+    [
+        'builder.cache_directory' => $app['builder.cache_dir'],
+    ]
+);
+```
+
 ```php
 $report = $app['service.report'];
 
