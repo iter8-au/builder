@@ -190,7 +190,18 @@ class Builder
         $data,
         $title
     ) {
-        $maxCol = 1;
+        // Check if we are setting any custom column widths
+        if ($this->hasColumnWidths()) {
+            // We have a numeric index array, so create an array of letters that we can use to map to Excel columns.
+            // e.g. 0 = A, 3 = D, etc.
+            $columns = range('A', 'Z');
+
+            // Loop through all of our column values -  we only set values for columns that we actually have
+            foreach ($this->getColumnWidths() as $columnKey => $columnWidth) {
+                $phpExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
+            }
+
+        }
 
         // Style settings for agent headers
         // http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object
@@ -224,6 +235,11 @@ class Builder
             // Apply header style to column headers
             $phpExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
 
+            // If no column widths are specified, then simply auto-size all columns
+            if (!$this->hasColumnWidths()) {
+                $phpExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+            }
+
             $col++;
         }
 
@@ -247,28 +263,6 @@ class Builder
             }
 
             $row++;
-        }
-
-        // Check if we are setting any custom column widths
-        if ($this->hasColumnWidths()) {
-            // We have a numeric index array, so create an array of letters that we can use to map to Excel columns.
-            // e.g. 0 = A, 3 = D, etc.
-            $columns = range('A', 'Z');
-
-            // Loop through all of our column values -  we only set values for columns that we actually have
-            foreach ($this->getColumnWidths() as $columnKey => $columnWidth) {
-                $phpExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
-            }
-
-        } else {
-            // If no column widths are specified, then simply auto-size all columns
-            $col = 0;
-            foreach (array_keys($data[0]) as $key) {
-                // Set the header value
-                $phpExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-
-                $col++;
-            }
         }
 
         // Rename sheet
