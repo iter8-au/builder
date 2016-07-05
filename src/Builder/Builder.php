@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Dean Smith <dean@iter8.com.au>
+ * @link https://github.com/iter8-au/builder
+ */
 namespace Builder;
 
 /**
@@ -186,6 +190,8 @@ class Builder
         $data,
         $title
     ) {
+        $maxCol = 1;
+
         // Style settings for agent headers
         // http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object
         $styleArray = array(
@@ -203,19 +209,6 @@ class Builder
                 'color' => array('rgb' => '000000')
             )
         );
-
-        // Check if we are setting any custom column values
-        if ($this->hasColumnWidths()) {
-            // We have a numeric index array, so create an array of letters that we can use to map to Excel columns.
-            // e.g. 0 = A, 3 = D, etc.
-            $columns = range('A', 'Z');
-
-            // Loop through all of our column values -  we only set values for columns that we actually have
-            foreach ($this->getColumnWidths() as $columnKey => $columnWidth) {
-                $phpExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
-            }
-
-        }
 
         // The row needs to start at 1 at the beginning of execution
         // the top left corner of the sheet is actually position (col = 0, row = 1)
@@ -254,6 +247,28 @@ class Builder
             }
 
             $row++;
+        }
+
+        // Check if we are setting any custom column widths
+        if ($this->hasColumnWidths()) {
+            // We have a numeric index array, so create an array of letters that we can use to map to Excel columns.
+            // e.g. 0 = A, 3 = D, etc.
+            $columns = range('A', 'Z');
+
+            // Loop through all of our column values -  we only set values for columns that we actually have
+            foreach ($this->getColumnWidths() as $columnKey => $columnWidth) {
+                $phpExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
+            }
+
+        } else {
+            // If no column widths are specified, then simply auto-size all columns
+            $col = 0;
+            foreach (array_keys($data[0]) as $key) {
+                // Set the header value
+                $phpExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+
+                $col++;
+            }
         }
 
         // Rename sheet

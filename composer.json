@@ -1,6 +1,6 @@
 {
   "name": "iter8/builder",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A wrapper for the PHP Excel library to help you quickly build reports",
   "keywords": ["phpexcel", "reports"],
   "homepage": "http://github.com/iter8-au/builder",

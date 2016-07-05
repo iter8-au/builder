@@ -5,7 +5,7 @@ A wrapper for the PHP Excel library to help you quickly build reports
 ## Example Usage
 
 ```php
-$app['builder.cache_dir'] = /var/cache;
+$app['builder.cache_dir'] = '/var/cache';
 
 $app->register(
     new BuilderServiceProvider(),
