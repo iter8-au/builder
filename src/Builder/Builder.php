@@ -185,6 +185,11 @@ class Builder
         return;
     }
 
+    /**
+     * @param $phpExcel
+     * @param $data
+     * @param $title
+     */
     public function createSheet(
         &$phpExcel,
         $data,
@@ -200,7 +205,6 @@ class Builder
             foreach ($this->getColumnWidths() as $columnKey => $columnWidth) {
                 $phpExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
             }
-
         }
 
         // Style settings for agent headers
@@ -235,19 +239,13 @@ class Builder
             // Apply header style to column headers
             $phpExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
 
-            // If no column widths are specified, then simply auto-size all columns
-            if (!$this->hasColumnWidths()) {
-                $phpExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-            }
-
             $col++;
         }
 
         $row++;
 
-        // Output each record
+        // Build each data row
         foreach ($data as $record) {
-
             $col = 0;
             foreach ($record as $column) {
                 $phpExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $column);
@@ -263,6 +261,15 @@ class Builder
             }
 
             $row++;
+        }
+
+        // If no column widths are specified, then simply auto-size all columns
+        if (!$this->hasColumnWidths()) {
+            $col = 0;
+            foreach (array_keys($data[0]) as $key) {
+                $phpExcel->getActiveSheet()->getColumnDimensionByColumn($col)->setAutoSize(true);
+                $col++;
+            }
         }
 
         // Rename sheet
