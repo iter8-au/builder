@@ -27,6 +27,9 @@ class Builder
      */
     private $phpexcel;
 
+    /**
+     * @var BuilderInterface
+     */
     private $builder;
 
     private $reportCacheDir;
@@ -68,8 +71,16 @@ class Builder
         $this->setBuilder($builder);
         $this->setReportCacheDir($reportCacheDir);
 
+        $this->prepareBuilder();
+
         // Default the report to Excel format (using PHPExcel)
         $this->setReportType(self::REPORT_EXCEL);
+    }
+
+    private function prepareBuilder()
+    {
+        $this->builder->setCacheDir($this->getReportCacheDir())
+                      ->initialise();
     }
 
     /**
@@ -207,36 +218,26 @@ class Builder
             'alignment' => BuilderInterface::ALIGNMENT_CENTRE,
             'font'      => [
                 'color' => [
-                    'rgb' => 'FFFFFF',
+                    'rgb' => BuilderInterface::COLOUR_WHITE_RGB,
                 ],
                 'bold'  => true,
             ],
             'fill'      => [
                 'type'  => BuilderInterface::FILL_SOLID,
                 'color' => [
-                    'rgb' => '000000',
+                    'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
                 ],
             ],
         ]);
 
+        // Build column headers.
+        $this->builder->buildHeaderRow($data[0], $style);
+
         // The row needs to start at 1 at the beginning of execution
         // the top left corner of the sheet is actually position (col = 0, row = 1)
         // http://stackoverflow.com/questions/2584954/phpexcel-how-to-set-cell-value-dynamically
-        $row = 1;
-
-        // Build column headers
+        $row = 2;
         $col = 0;
-        foreach (array_keys($data[0]) as $key) {
-            // Set the header value
-            $phpExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $key);
-
-            // Apply header style to column headers
-            $phpExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
-
-            $col++;
-        }
-
-        $row++;
 
         // Build each data row
         foreach ($data as $record) {

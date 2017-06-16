@@ -2,9 +2,11 @@
 
 namespace Builder;
 
+use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\Color;
+use Box\Spout\Writer\Style\Style;
+use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
-use Box\Spout\Writer\XLSX\Writer as XLSXWriter;
 
 /**
  * Class SpoutBuilder
@@ -12,14 +14,29 @@ use Box\Spout\Writer\XLSX\Writer as XLSXWriter;
  */
 class SpoutBuilder implements BuilderInterface
 {
+    use BuilderTrait;
+
     /**
-     * @var \Box\Spout\Writer\XLSX\Writer
+     * @var \Box\Spout\Writer\WriterInterface
      */
     private $writer;
 
+    /**
+     * SpoutBuilder constructor.
+     */
     public function __construct()
     {
-        $this->writer = new XLSXWriter();
+        $this->writer = new WriterFactory(Type::XLSX);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws \Box\Spout\Common\Exception\IOException
+     */
+    public function initialise()
+    {
+        $this->writer->openToFile($this->getCacheName());
     }
 
     /**
@@ -112,5 +129,24 @@ class SpoutBuilder implements BuilderInterface
         }
 
         return $finalStyle->build();
+    }
+
+    /**
+     * @param array $columns
+     * @param mixed|null $style
+     *
+     * @throws \Box\Spout\Common\Exception\IOException
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     */
+    public function buildHeaderRow($columns, $style = null)
+    {
+        $keys = array_keys($columns);
+
+        if ($style instanceof Style) {
+            $this->writer->addRowWithStyle($keys, $style);
+        } else {
+            $this->writer->addRow($keys);
+        }
     }
 }

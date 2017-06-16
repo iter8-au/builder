@@ -12,6 +12,8 @@ use PHPExcel_Style_Alignment;
  */
 class PHPExcelBuilder implements BuilderInterface
 {
+    use BuilderTrait;
+
     /**
      * @var PHPExcel
      */
@@ -23,6 +25,14 @@ class PHPExcelBuilder implements BuilderInterface
     public function __construct()
     {
         $this->builder = new PHPExcel();
+    }
+
+    /**
+     * @return void
+     */
+    public function initialise()
+    {
+        // TODO: Implement initialise() method.
     }
 
     /**
@@ -178,5 +188,30 @@ class PHPExcelBuilder implements BuilderInterface
         }
 
         return $finalStyleArray;
+    }
+
+    /**
+     * @param  array $columns
+     * @param  mixed $style
+     *
+     * @throws \PHPExcel_Exception
+     */
+    public function buildHeaderRow($columns, $style = null)
+    {
+        $row    = 1;
+        $column = 0;
+
+        foreach (array_keys($columns) as $key) {
+            $this->builder->getActiveSheet()->setCellValueByColumnAndRow($column, $row, $key);
+
+            if (is_array($style)) {
+                $this->builder
+                     ->getActiveSheet()
+                     ->getStyleByColumnAndRow($column, $row)
+                     ->applyFromArray($style);
+            }
+
+            $column++;
+        }
     }
 }

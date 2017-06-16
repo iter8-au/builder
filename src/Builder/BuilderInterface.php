@@ -15,6 +15,26 @@ interface BuilderInterface
     const FILL_SOLID = 'FILL_SOLID';
     const FILL_NONE  = 'FILL_NONE';
 
+    const COLOUR_BLACK_RGB = '000000';
+    const COLOUR_WHITE_RGB = 'FFFFFF';
+
+    /**
+     * @return void
+     */
+    public function initialise();
+
+    /**
+     * @param  string $cacheDir
+     *
+     * @return $this
+     */
+    public function setCacheDir($cacheDir);
+
+    /**
+     * @return string
+     */
+    public function getCacheName();
+
     /**
      * @param  string|null $creator
      *
@@ -63,4 +83,10 @@ interface BuilderInterface
      * @return mixed
      */
     public function buildRowStyle(array $style);
+
+    /**
+     * @param  array $columns
+     * @param  mixed|null $style
+     */
+    public function buildHeaderRow($columns, $style = null);
 }
