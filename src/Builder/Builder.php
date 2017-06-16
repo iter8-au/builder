@@ -201,16 +201,13 @@ class Builder
         $data,
         $title
     ) {
-        // Check if we are setting any custom column widths
+        // Check if we are setting any custom column widths.
         if ($this->hasColumnWidths()) {
             // We have a numeric index array, so create an array of letters that we can use to map to Excel columns.
             // e.g. 0 = A, 3 = D, etc.
             $columns = range('A', 'Z');
 
-            // Loop through all of our column values -  we only set values for columns that we actually have
-            foreach ($this->getColumnWidths() as $columnKey => $columnWidth) {
-                $phpExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
-            }
+            $this->builder->applyColumnWidths($columns, $this->getColumnWidths());
         }
 
         // Style settings for agent headers
@@ -234,21 +231,17 @@ class Builder
         $this->builder->buildHeaderRow($data[0], $style);
 
         // Remove the first element (header row) of the $data array.
-        array_shift($data);
+        $headers = array_shift($data);
 
         $this->builder->buildRows($data);
 
-        // If no column widths are specified, then simply auto-size all columns
+        // If no column widths are specified, then simply auto-size all columns.
         if (!$this->hasColumnWidths()) {
-            $col = 0;
-            foreach (array_keys($data[0]) as $key) {
-                $phpExcel->getActiveSheet()->getColumnDimensionByColumn($col)->setAutoSize(true);
-                $col++;
-            }
+            $this->builder->autoSizeColumns($headers);
         }
 
-        // Rename sheet
-        $phpExcel->getActiveSheet()->setTitle($title);
+        // Rename sheet.
+        $this->builder->setSheetTitle($title);
 
         return;
     }

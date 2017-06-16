@@ -2,6 +2,7 @@
 
 namespace Builder;
 
+use Builder\Traits\BuilderCacheTrait;
 use PHPExcel;
 use PHPExcel_Style_Fill;
 use PHPExcel_Style_Alignment;
@@ -12,7 +13,7 @@ use PHPExcel_Style_Alignment;
  */
 class PHPExcelBuilder implements BuilderInterface
 {
-    use BuilderTrait;
+    use BuilderCacheTrait;
 
     /**
      * @var PHPExcel
@@ -32,7 +33,7 @@ class PHPExcelBuilder implements BuilderInterface
      */
     public function initialise()
     {
-        // TODO: Implement initialise() method.
+        //
     }
 
     /**
@@ -105,6 +106,20 @@ class PHPExcelBuilder implements BuilderInterface
     public function setActiveSheetIndex($sheetIndex)
     {
         $this->builder->setActiveSheetIndex($sheetIndex);
+
+        return $this;
+    }
+
+    /**
+     * @param  string $title
+     *
+     * @return $this
+     *
+     * @throws \PHPExcel_Exception
+     */
+    public function setSheetTitle($title)
+    {
+        $this->builder->getActiveSheet()->setTitle($title);
 
         return $this;
     }
@@ -221,14 +236,14 @@ class PHPExcelBuilder implements BuilderInterface
 
     /**
      * @param  array      $row
-     * @param  int        $rowIndex
      * @param  mixed|null $style
+     * @param  int        $rowIndex
      *
      * @return void
      *
      * @throws \PHPExcel_Exception
      */
-    public function buildRow($row, $rowIndex, $style = null)
+    public function buildRow($row, $style = null, $rowIndex = 1)
     {
         $columnIndex = 0;
 
@@ -262,9 +277,57 @@ class PHPExcelBuilder implements BuilderInterface
         }
 
         foreach ($rows as $row) {
-            $this->buildRow($row, $rowIndex, $style);
+            $this->buildRow($row, $style, $rowIndex);
 
             $rowIndex++;
         }
+    }
+
+    /**
+     * @param  array    $columns
+     * @param  array    $widths
+     * @param  int|null $sheet
+     *
+     * @return void
+     *
+     * @throws \PHPExcel_Exception
+     */
+    public function applyColumnWidths(array $columns, array $widths, $sheet = null)
+    {
+        if ($sheet !== null) {
+            $this->builder->setActiveSheetIndex($sheet);
+        }
+
+        // Loop through all of our column values -  we only set values for columns that we actually have.
+        foreach ($widths as $columnKey => $columnWidth) {
+            $this->builder->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
+        }
+    }
+
+    /**
+     * @param  array    $columns
+     * @param  int|null $sheet
+     *
+     * @return void
+     *
+     * @throws \PHPExcel_Exception
+     */
+    public function autoSizeColumns(array $columns, $sheet = null)
+    {
+        if ($sheet !== null) {
+            $this->builder->setActiveSheetIndex($sheet);
+        }
+
+        $columnCount = count($columns);
+
+        for ($columnIndex = 0; $columnIndex <= $columnCount; $columnIndex++) {
+            $this->builder->getActiveSheet()->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
+        }
+
+//        foreach (array_keys($data[0]) as $key) {
+//            $this->builder->getActiveSheet()->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
+//
+//            $columnIndex++;
+//        }
     }
 }

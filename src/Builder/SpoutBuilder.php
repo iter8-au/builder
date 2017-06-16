@@ -2,11 +2,14 @@
 
 namespace Builder;
 
+use Builder\Traits\BuilderCacheTrait;
+use Builder\Traits\InitialisationStateTrait;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Common\Exception\UnsupportedTypeException;
 
 /**
  * Class SpoutBuilder
@@ -14,10 +17,10 @@ use Box\Spout\Writer\Style\StyleBuilder;
  */
 class SpoutBuilder implements BuilderInterface
 {
-    use BuilderTrait;
+    use BuilderCacheTrait, InitialisationStateTrait;
 
     /**
-     * @var \Box\Spout\Writer\WriterInterface
+     * @var \Box\Spout\Writer\AbstractMultiSheetsWriter
      */
     private $writer;
 
@@ -26,7 +29,11 @@ class SpoutBuilder implements BuilderInterface
      */
     public function __construct()
     {
-        $this->writer = WriterFactory::create(Type::XLSX);
+        try {
+            $this->writer = WriterFactory::create(Type::XLSX);
+        } catch (UnsupportedTypeException $e) {
+            // This will never happen.
+        }
     }
 
     /**
@@ -37,6 +44,8 @@ class SpoutBuilder implements BuilderInterface
     public function initialise()
     {
         $this->writer->openToFile($this->getCacheName());
+
+        $this->setAsInitialised();
     }
 
     /**
@@ -100,6 +109,26 @@ class SpoutBuilder implements BuilderInterface
     }
 
     /**
+     * @param  string $title
+     *
+     * @return $this
+     *
+     * @throws \Box\Spout\Common\Exception\IOException
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException
+     */
+    public function setSheetTitle($title)
+    {
+        if ($this->isNotInitialised()) {
+            $this->initialise();
+        }
+
+        $this->writer->getCurrentSheet()->setName($title);
+
+        return $this;
+    }
+
+    /**
      * @param  array $style
      *
      * @return \Box\Spout\Writer\Style\Style
@@ -141,6 +170,10 @@ class SpoutBuilder implements BuilderInterface
      */
     public function buildHeaderRow($columns, $style = null)
     {
+        if ($this->isNotInitialised()) {
+            $this->initialise();
+        }
+
         $keys = array_keys($columns);
 
         if ($style instanceof Style) {
@@ -152,23 +185,71 @@ class SpoutBuilder implements BuilderInterface
 
     /**
      * @param  array      $row
-     * @param  int        $rowIndex
      * @param  mixed|null $style
+     * @param  int        $rowIndex
      *
      * @return void
+     *
+     * @throws \Box\Spout\Common\Exception\IOException
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
      */
-    public function buildRow($row, $rowIndex, $style = null)
+    public function buildRow($row, $style = null, $rowIndex = 1)
     {
-        // TODO: Implement buildRow() method.
+        if ($this->isNotInitialised()) {
+            $this->initialise();
+        }
+
+        if ($style instanceof Style) {
+            $this->writer->addRowWithStyle($row, $style);
+        } else {
+            $this->writer->addRow($row);
+        }
     }
 
     /**
-     * @param  array $rows
+     * @param  array      $rows
      * @param  mixed|null $style
+     *
      * @return void
+     *
+     * @throws \Box\Spout\Common\Exception\IOException
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
      */
     public function buildRows($rows, $style = null)
     {
-        // TODO: Implement buildRows() method.
+        if ($this->isNotInitialised()) {
+            $this->initialise();
+        }
+
+        if ($style instanceof Style) {
+            $this->writer->addRowsWithStyle($rows, $style);
+        } else {
+            $this->writer->addRows($rows);
+        }
+    }
+
+    /**
+     * @param  array    $columns
+     * @param  array    $widths
+     * @param  int|null $sheet
+     *
+     * @return void
+     */
+    public function applyColumnWidths(array $columns, array $widths, $sheet = null)
+    {
+        // Spout doesn't support setting fixed column widths yet.
+    }
+
+    /**
+     * @param  array $columns
+     * @param  int|null $sheet
+     *
+     * @return void
+     */
+    public function autoSizeColumns(array $columns, $sheet = null)
+    {
+        // Spout doesn't support auto-sizing of columns yet.
     }
 }

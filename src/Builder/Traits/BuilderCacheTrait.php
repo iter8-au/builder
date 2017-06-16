@@ -1,12 +1,12 @@
 <?php
 
-namespace Builder;
+namespace Builder\Traits;
 
 /**
- * Trait BuilderTrait
- * @package Builder
+ * Trait BuilderCacheTrait
+ * @package Builder\Traits
  */
-trait BuilderTrait
+trait BuilderCacheTrait
 {
     /**
      * @var string

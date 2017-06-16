@@ -78,6 +78,13 @@ interface BuilderInterface
     public function setActiveSheetIndex($sheetIndex);
 
     /**
+     * @param  string $title
+     *
+     * @return $this
+     */
+    public function setSheetTitle($title);
+
+    /**
      * @param  array $style
      *
      * @return mixed
@@ -93,13 +100,13 @@ interface BuilderInterface
     public function buildHeaderRow($columns, $style = null);
 
     /**
-     * @param  array      $row
-     * @param  int        $rowIndex
+     * @param  array $row
      * @param  mixed|null $style
+     * @param  int $rowIndex
      *
      * @return void
      */
-    public function buildRow($row, $rowIndex, $style = null);
+    public function buildRow($row, $style = null, $rowIndex = 1);
 
     /**
      * @param  array      $rows
@@ -107,4 +114,21 @@ interface BuilderInterface
      * @return void
      */
     public function buildRows($rows, $style = null);
+
+    /**
+     * @param  array    $columns
+     * @param  array    $widths
+     * @param  int|null $sheet
+     *
+     * @return void
+     */
+    public function applyColumnWidths(array $columns, array $widths, $sheet = null);
+
+    /**
+     * @param  array    $columns
+     * @param  int|null $sheet
+     *
+     * @return void
+     */
+    public function autoSizeColumns(array $columns, $sheet = null);
 }
