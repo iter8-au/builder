@@ -233,30 +233,10 @@ class Builder
         // Build column headers.
         $this->builder->buildHeaderRow($data[0], $style);
 
-        // The row needs to start at 1 at the beginning of execution
-        // the top left corner of the sheet is actually position (col = 0, row = 1)
-        // http://stackoverflow.com/questions/2584954/phpexcel-how-to-set-cell-value-dynamically
-        $row = 2;
-        $col = 0;
+        // Remove the first element (header row) of the $data array.
+        array_shift($data);
 
-        // Build each data row
-        foreach ($data as $record) {
-            $col = 0;
-            foreach ($record as $column) {
-                $phpExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $column);
-
-                if ($this->hasColumnStylesForColumn($col)) {
-                    // Apply style to column
-                    $phpExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray(
-                        $this->getPHPExcelColumnStylesForColumn($col)
-                    );
-                }
-
-                $col++;
-            }
-
-            $row++;
-        }
+        $this->builder->buildRows($data);
 
         // If no column widths are specified, then simply auto-size all columns
         if (!$this->hasColumnWidths()) {

@@ -194,10 +194,14 @@ class PHPExcelBuilder implements BuilderInterface
      * @param  array $columns
      * @param  mixed $style
      *
+     * @return void
+     *
      * @throws \PHPExcel_Exception
      */
     public function buildHeaderRow($columns, $style = null)
     {
+        // The row needs to start at 1 at the beginning of execution.
+        // The top left corner of the sheet is actually position (col = 0, row = 1).
         $row    = 1;
         $column = 0;
 
@@ -212,6 +216,55 @@ class PHPExcelBuilder implements BuilderInterface
             }
 
             $column++;
+        }
+    }
+
+    /**
+     * @param  array      $row
+     * @param  int        $rowIndex
+     * @param  mixed|null $style
+     *
+     * @return void
+     *
+     * @throws \PHPExcel_Exception
+     */
+    public function buildRow($row, $rowIndex, $style = null)
+    {
+        $columnIndex = 0;
+
+        foreach ($row as $column) {
+            $this->builder->getActiveSheet()->setCellValueByColumnAndRow($columnIndex, $rowIndex, $column);
+
+            $columnIndex++;
+        }
+    }
+
+    /**
+     * http://stackoverflow.com/questions/2584954/phpexcel-how-to-set-cell-value-dynamically
+     *
+     * @param  array      $rows
+     * @param  mixed|null $style
+     *
+     * @return void
+     *
+     * @throws \PHPExcel_Exception
+     */
+    public function buildRows($rows, $style = null)
+    {
+        // The row needs to start at 1 at the beginning of execution.
+        // The top left corner of the sheet is actually position (col = 0, row = 1).
+        $rowIndex = 1;
+
+        // If we have a header row then we need to bump the row index down one,
+        // otherwise we'll overwrite the header (not ideal).
+        if ($this->builder->getActiveSheet()->cellExistsByColumnAndRow(0, $rowIndex)) {
+            $rowIndex = 2;
+        }
+
+        foreach ($rows as $row) {
+            $this->buildRow($row, $rowIndex, $style);
+
+            $rowIndex++;
         }
     }
 }

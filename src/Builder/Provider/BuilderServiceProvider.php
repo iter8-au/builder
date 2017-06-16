@@ -16,12 +16,21 @@ class BuilderServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
+        $app['builder.default_options'] = [
+            'driver'    => 'phpexcel',
+            'cache_dir' => __DIR__ . '/../../../../../../../../cache/builder',
+        ];
+
         $app['builder'] = $app->share(function ($app) {
+            $cacheDir = !empty($app['builder.cache_dir'])
+                      ? $app['builder.cache_dir']
+                      : $app['builder.default_options']['cache_dir'];
+
             switch ($app['builder.driver']) {
                 case 'spout':
                     $builder = new Builder(
                         new SpoutBuilder(),
-                        $app['builder.cache_dir']
+                        $cacheDir
                     );
 
                     break;
@@ -30,7 +39,7 @@ class BuilderServiceProvider implements ServiceProviderInterface
                 default:
                     $builder = new Builder(
                         new PHPExcelBuilder(),
-                        $app['builder.cache_dir']
+                        $cacheDir
                     );
 
                     break;

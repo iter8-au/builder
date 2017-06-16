@@ -87,6 +87,24 @@ interface BuilderInterface
     /**
      * @param  array $columns
      * @param  mixed|null $style
+     *
+     * @return void
      */
     public function buildHeaderRow($columns, $style = null);
+
+    /**
+     * @param  array      $row
+     * @param  int        $rowIndex
+     * @param  mixed|null $style
+     *
+     * @return void
+     */
+    public function buildRow($row, $rowIndex, $style = null);
+
+    /**
+     * @param  array      $rows
+     * @param  mixed|null $style
+     * @return void
+     */
+    public function buildRows($rows, $style = null);
 }

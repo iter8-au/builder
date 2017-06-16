@@ -26,7 +26,7 @@ class SpoutBuilder implements BuilderInterface
      */
     public function __construct()
     {
-        $this->writer = new WriterFactory(Type::XLSX);
+        $this->writer = WriterFactory::create(Type::XLSX);
     }
 
     /**
@@ -148,5 +148,27 @@ class SpoutBuilder implements BuilderInterface
         } else {
             $this->writer->addRow($keys);
         }
+    }
+
+    /**
+     * @param  array      $row
+     * @param  int        $rowIndex
+     * @param  mixed|null $style
+     *
+     * @return void
+     */
+    public function buildRow($row, $rowIndex, $style = null)
+    {
+        // TODO: Implement buildRow() method.
+    }
+
+    /**
+     * @param  array $rows
+     * @param  mixed|null $style
+     * @return void
+     */
+    public function buildRows($rows, $style = null)
+    {
+        // TODO: Implement buildRows() method.
     }
 }
