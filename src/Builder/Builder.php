@@ -1,15 +1,12 @@
 <?php
-/**
- * @author Dean Smith <dean@iter8.com.au>
- * @link https://github.com/iter8-au/builder
- */
+
 namespace Builder;
 
 /**
  * Helper for easily generating cached Excel or CSV files, ready to download, from an array of data.
  *
- * Class ReportService
- * @package SD\Vendo\Service
+ * Class Builder
+ * @package Builder
  */
 class Builder
 {
@@ -29,6 +26,8 @@ class Builder
      * @var \PHPExcel
      */
     private $phpexcel;
+
+    private $builder;
 
     private $reportCacheDir;
 
@@ -63,11 +62,10 @@ class Builder
     private $columnStyles;
 
     public function __construct(
-        \PHPExcel $phpexcel,
+        BuilderInterface $builder,
         $reportCacheDir
-    )
-    {
-        $this->setPHPExcel($phpexcel);
+    ) {
+        $this->setBuilder($builder);
         $this->setReportCacheDir($reportCacheDir);
 
         // Default the report to Excel format (using PHPExcel)
@@ -77,11 +75,8 @@ class Builder
     /**
      * Generate the final report using whatever the set format is
      */
-    public function generate(
-        $unlinkFlag = true
-    )
-    {
-        // Determine which format we are using and call the apppriate method
+    public function generate($unlinkFlag = true) {
+        // Determine which format we are using and call the appropriate method.
         if ($this->getReportType() === self::REPORT_EXCEL) {
             $this->generateExcel();
         } else {
@@ -91,15 +86,15 @@ class Builder
 
     public function generateExcel()
     {
-        $objPHPExcel = $this->getPhpexcel();
+        $builder = $this->getBuilder();
         $reportArray = $this->getData();
 
         // Set properties from Service values
-        $objPHPExcel->getProperties()->setCreator($this->getCreator());
-        $objPHPExcel->getProperties()->setLastModifiedBy($this->getCreator());
-        $objPHPExcel->getProperties()->setTitle($this->getTitle());
-        $objPHPExcel->getProperties()->setSubject($this->getTitle());
-        $objPHPExcel->getProperties()->setDescription($this->getDescription());
+        $builder->setCreator($this->getCreator())
+                ->setLastModifiedBy($this->getCreator())
+                ->setTitle($this->getTitle())
+                ->setSubject($this->getTitle())
+                ->setDescription($this->getDescription());
 
         if ($this->hasSheets()) {
             // Multiple sheets
@@ -109,12 +104,12 @@ class Builder
         } else {
             // Single sheet - these will be an array and a string
             $reportArray = $this->getData();
-            $sheetTitle = $this->getSheetTitles();
+            $sheetTitle  = $this->getSheetTitles();
 
-            $objPHPExcel->setActiveSheetIndex(0);
+            $builder->setActiveSheetIndex(0);
 
             $this->createSheet(
-                $objPHPExcel,
+                $builder,
                 $reportArray,
                 $sheetTitle
             );
@@ -186,12 +181,12 @@ class Builder
     }
 
     /**
-     * @param $phpExcel
-     * @param $data
-     * @param $title
+     * @param \Builder\BuilderInterface $builder
+     * @param array                     $data
+     * @param string                    $title
      */
     public function createSheet(
-        &$phpExcel,
+        &$builder,
         $data,
         $title
     ) {
@@ -208,22 +203,21 @@ class Builder
         }
 
         // Style settings for agent headers
-        // http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object
-        $styleArray = array(
-            'alignment' => array(
-                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-            ),
-            'font' => array(
-                'color' => array(
-                    'rgb' => 'FFFFFF'
-                ),
-                'bold' => true
-            ),
-            'fill' => array(
-                'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-                'color' => array('rgb' => '000000')
-            )
-        );
+        $style = $builder->buildRowStyle([
+            'alignment' => BuilderInterface::ALIGNMENT_CENTRE,
+            'font'      => [
+                'color' => [
+                    'rgb' => 'FFFFFF',
+                ],
+                'bold'  => true,
+            ],
+            'fill'      => [
+                'type'  => BuilderInterface::FILL_SOLID,
+                'color' => [
+                    'rgb' => '000000',
+                ],
+            ],
+        ]);
 
         // The row needs to start at 1 at the beginning of execution
         // the top left corner of the sheet is actually position (col = 0, row = 1)
@@ -399,6 +393,26 @@ class Builder
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return \Builder\BuilderInterface
+     */
+    public function getBuilder()
+    {
+        return $this->builder;
+    }
+
+    /**
+     * @param  \Builder\BuilderInterface $builder
+     *
+     * @return $this
+     */
+    public function setBuilder(BuilderInterface $builder)
+    {
+        $this->builder = $builder;
 
         return $this;
     }
