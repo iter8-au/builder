@@ -1,8 +1,8 @@
 {
   "name": "iter8/builder",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "description": "A wrapper for the PHP Excel library to help you quickly build reports",
-  "keywords": ["phpexcel", "reports"],
+  "keywords": ["phpexcel", "reports", "excel", "spout"],
   "homepage": "https://github.com/iter8-au/builder",
   "type": "library",
   "authors": [
@@ -17,6 +17,9 @@
     "phpoffice/phpexcel": "~1.8",
     "box/spout": "^2.7",
     "roave/security-advisories": "dev-master"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8"
   },
   "autoload": {
     "psr-4": {
