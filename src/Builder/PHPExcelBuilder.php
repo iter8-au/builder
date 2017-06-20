@@ -2,8 +2,9 @@
 
 namespace Builder;
 
-use Builder\Traits\BuilderCacheTrait;
+use Builder\Traits\BuilderFilesTrait;
 use PHPExcel;
+use PHPExcel_IOFactory;
 use PHPExcel_Style_Fill;
 use PHPExcel_Style_Alignment;
 
@@ -13,10 +14,10 @@ use PHPExcel_Style_Alignment;
  */
 class PHPExcelBuilder implements BuilderInterface
 {
-    use BuilderCacheTrait;
+    use BuilderFilesTrait;
 
     /**
-     * @var PHPExcel
+     * @var \PHPExcel
      */
     private $builder;
 

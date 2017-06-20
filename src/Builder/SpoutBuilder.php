@@ -2,13 +2,14 @@
 
 namespace Builder;
 
-use Builder\Traits\BuilderCacheTrait;
+use Builder\Traits\BuilderFilesTrait;
 use Builder\Traits\InitialisationStateTrait;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 
 /**
@@ -17,7 +18,7 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
  */
 class SpoutBuilder implements BuilderInterface
 {
-    use BuilderCacheTrait, InitialisationStateTrait;
+    use BuilderFilesTrait, InitialisationStateTrait;
 
     /**
      * @var \Box\Spout\Writer\AbstractMultiSheetsWriter
