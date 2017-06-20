@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A wrapper for the PHP Excel library to help you quickly build reports",
   "keywords": ["phpexcel", "reports", "excel", "spout"],
+  "license": "proprietary",
   "homepage": "https://github.com/iter8-au/builder",
   "type": "library",
   "authors": [
@@ -10,13 +11,17 @@
       "name": "Dean Smith",
       "email": "dean@iter8.com.au",
       "homepage": "https://iter8.com.au"
+    },
+    {
+      "name": "Dan Barrett",
+      "email": "dan@iter8.com.au",
+      "homepage": "http://iter8.com.au"
     }
   ],
   "require": {
     "php": "^5.4",
     "phpoffice/phpexcel": "~1.8",
-    "box/spout": "^2.7",
-    "roave/security-advisories": "dev-master"
+    "box/spout": "^2.7"
   },
   "require-dev": {
     "phpunit/phpunit": "^4.8",
