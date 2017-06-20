@@ -4,12 +4,10 @@ namespace Builder\Tests;
 
 use Builder\Interfaces\BuilderInterface;
 use Builder\Interfaces\BuilderTestInterface;
-use Builder\Provider\BuilderServiceProvider;
+use Builder\Provider\Silex\BuilderServiceProvider;
 use Silex\Application;
-use Box\Spout\Common\Type;
 use PHPUnit_Framework_TestCase;
 use Box\Spout\Writer\Style\Color;
-use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Common\Helper\FileSystemHelper;
 

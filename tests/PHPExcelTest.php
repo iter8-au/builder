@@ -2,8 +2,8 @@
 
 namespace Builder\Tests;
 
-use Builder\Provider\BuilderServiceProvider;
 use Builder\Interfaces\BuilderTestInterface;
+use Builder\Provider\Silex\BuilderServiceProvider;
 use Silex\Application;
 use PHPUnit_Framework_TestCase;
 use Box\Spout\Common\Helper\FileSystemHelper;

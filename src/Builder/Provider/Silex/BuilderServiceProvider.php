@@ -1,6 +1,6 @@
 <?php
 
-namespace Builder\Provider;
+namespace Builder\Provider\Silex;
 
 use Builder\Builder;
 use Builder\Builders\SpoutBuilder;
@@ -10,7 +10,7 @@ use Silex\ServiceProviderInterface;
 
 /**
  * Class BuilderServiceProvider
- * @package Builder\Provider
+ * @package Builder\Provider\Silex
  */
 class BuilderServiceProvider implements ServiceProviderInterface
 {
