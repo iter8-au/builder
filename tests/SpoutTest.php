@@ -2,12 +2,12 @@
 
 namespace Builder\Tests;
 
-use Builder\SpoutBuilder;
 use Builder\BuilderInterface;
 use Builder\Provider\BuilderServiceProvider;
 use Silex\Application;
+use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\Color;
-use Box\Spout\Writer\Style\Style;
+use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Common\Helper\FileSystemHelper;
 
@@ -76,6 +76,115 @@ class SpoutTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     *
+     * TODO: Open the file with the Reader and verify a row/column value.
+     */
+    public function can_create_single_spreadsheet()
+    {
+        // Arrange
+        $app = new Application();
+        $app->register(new BuilderServiceProvider(), [
+            'builder.driver'    => 'spout',
+            'builder.cache_dir' => $this->getCacheDir(),
+        ]);
+        // $reader = ReaderFactory::create(Type::XLSX);
+
+        // Act
+        $app['builder']->setSheetTitles('Spout Test');
+        $app['builder']->setData(
+            [
+                [
+                    'Column 1' => 'column_1',
+                    'Column 2' => 'column_2',
+                    'Column 3' => 'column_3',
+                ],
+                [
+                    'column_1' => '1',
+                    'column_2' => 'Two',
+                    'column_3' => '333'
+                ],
+                [
+                    'column_1' => 'One',
+                    'column_2' => '2',
+                    'column_3' => 'Three x 3'
+                ],
+            ]
+        );
+        $app['builder']->generateExcel();
+
+        $generatedExcelFile = $app['builder']->getTempName();
+
+        // Assert
+        $this->assertFileExists($generatedExcelFile);
+        $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
+//        $reader->open($generatedExcel);
+//
+//        $sheets = $reader->getSheetIterator();
+//
+//        $sheets->rewind();
+//
+//        $sheet = $sheets->current()->getRowIterator()->next()->current();
+//        die(var_dump($sheet));
+    }
+
+    /**
+     * @test
+     */
+    public function can_create_multi_page_spreadsheet()
+    {
+        // Arrange
+        $app = new Application();
+        $app->register(new BuilderServiceProvider(), [
+            'builder.driver'    => 'spout',
+            'builder.cache_dir' => $this->getCacheDir(),
+        ]);
+
+        // Act
+        $app['builder']->setSheetTitles(
+            [
+                'Sheet 1 of 2',
+                'Sheet 2 of 2',
+            ]
+        );
+        $app['builder']->setSheets(
+            [
+                [
+                    [
+                        'Column 1' => 'column_1',
+                        'Column 2' => 'column_2',
+                    ],
+                    [
+                        'Row 1',
+                        'Sheet 1',
+                    ],
+                ],
+                [
+                    [
+                        'Column 1' => 'column_1',
+                        'Column 2' => 'column_2',
+                    ],
+                    [
+                        'Row 2',
+                        'Sheet 2',
+                    ],
+                    [
+                        'Row 3',
+                        'Sheet 2',
+                    ],
+                ],
+            ]
+        );
+        $app['builder']->generateExcel();
+
+        $generatedExcelFile = $app['builder']->getTempName();
+
+        // Assert
+        $this->assertFileExists($generatedExcelFile);
+        $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
+    }
+
+    /**
      * @return string
      */
     private function getCacheDir()
@@ -90,7 +199,9 @@ class SpoutTest extends \PHPUnit_Framework_TestCase
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
-        $fileSystemHelper->createFolder(__DIR__ . '/cache', 'spout');
+        if (is_dir(__DIR__ . '/cache/spout') === false) {
+            $fileSystemHelper->createFolder(__DIR__ . '/cache', 'spout');
+        }
     }
 
     /**
