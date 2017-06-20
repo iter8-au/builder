@@ -3,9 +3,11 @@
 namespace Builder\Tests;
 
 use Builder\BuilderInterface;
+use Builder\Interfaces\BuilderTestInterface;
 use Builder\Provider\BuilderServiceProvider;
 use Silex\Application;
 use Box\Spout\Common\Type;
+use PHPUnit_Framework_TestCase;
 use Box\Spout\Writer\Style\Color;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
@@ -15,12 +17,12 @@ use Box\Spout\Common\Helper\FileSystemHelper;
  * Class SpoutTest
  * @package Builder\Tests
  */
-class SpoutTest extends \PHPUnit_Framework_TestCase
+class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterface
 {
     /**
      * @test
      */
-    public function builder_is_spout_builder()
+    public function builder_is_correct_builder()
     {
         // Arrange
         $app = new Application();
@@ -80,7 +82,7 @@ class SpoutTest extends \PHPUnit_Framework_TestCase
      *
      * TODO: Open the file with the Reader and verify a row/column value.
      */
-    public function can_create_single_spreadsheet()
+    public function can_create_single_sheet_spreadsheet()
     {
         // Arrange
         $app = new Application();
@@ -131,7 +133,7 @@ class SpoutTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function can_create_multi_page_spreadsheet()
+    public function can_create_multi_sheet_spreadsheet()
     {
         // Arrange
         $app = new Application();
@@ -211,6 +213,6 @@ class SpoutTest extends \PHPUnit_Framework_TestCase
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
-        $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/spout');
+        //$fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/spout');
     }
 }

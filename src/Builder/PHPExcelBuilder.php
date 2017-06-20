@@ -35,7 +35,7 @@ class PHPExcelBuilder implements BuilderInterface
      */
     public function initialise()
     {
-        //
+        // No initialisation required for the PHPExcel library.
     }
 
     /**
@@ -127,6 +127,16 @@ class PHPExcelBuilder implements BuilderInterface
     }
 
     /**
+     * @return void
+     *
+     * @throws \PHPExcel_Exception
+     */
+    public function createNewSheet()
+    {
+        $this->builder->createSheet();
+    }
+
+    /**
      * http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object
      *
      * @param  array $style
@@ -135,7 +145,7 @@ class PHPExcelBuilder implements BuilderInterface
      */
     public function buildRowStyle(array $style)
     {
-        $finalStyleArray = [];
+        $finalStyleArray   = [];
         $defaultStyleArray = [
             'alignment' => [
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,

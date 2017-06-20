@@ -91,6 +91,11 @@ class Builder
              ->initialise();
     }
 
+    /**
+     * Get the temp filename for the Excel builder.
+     *
+     * @return string
+     */
     public function getTempName()
     {
         return $this->builder->getTempName();
