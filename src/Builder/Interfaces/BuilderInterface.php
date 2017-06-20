@@ -1,10 +1,10 @@
 <?php
 
-namespace Builder;
+namespace Builder\Interfaces;
 
 /**
  * Interface BuilderInterface
- * @package Builder
+ * @package Builder\Interfaces
  */
 interface BuilderInterface
 {

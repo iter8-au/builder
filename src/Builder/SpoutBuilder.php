@@ -3,6 +3,7 @@
 namespace Builder;
 
 use Builder\Traits\BuilderFilesTrait;
+use Builder\Interfaces\BuilderInterface;
 use Builder\Traits\InitialisationStateTrait;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\Color;

@@ -3,6 +3,7 @@
 namespace Builder;
 
 use Builder\Traits\BuilderFilesTrait;
+use Builder\Interfaces\BuilderInterface;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Style_Fill;
