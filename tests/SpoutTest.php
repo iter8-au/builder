@@ -33,7 +33,7 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
         $app->register(new BuilderServiceProvider());
 
         // Assert
-        $this->assertInstanceOf('Builder\SpoutBuilder', $app['builder']->getBuilder());
+        $this->assertInstanceOf('Builder\Builders\SpoutBuilder', $app['builder']->getBuilder());
     }
 
     /**

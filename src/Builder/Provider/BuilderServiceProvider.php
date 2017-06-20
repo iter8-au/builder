@@ -3,8 +3,8 @@
 namespace Builder\Provider;
 
 use Builder\Builder;
-use Builder\SpoutBuilder;
-use Builder\PHPExcelBuilder;
+use Builder\Builders\SpoutBuilder;
+use Builder\Builders\PHPExcelBuilder;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 

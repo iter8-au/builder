@@ -1,6 +1,6 @@
 <?php
 
-namespace Builder;
+namespace Builder\Builders;
 
 use Builder\Traits\BuilderFilesTrait;
 use Builder\Interfaces\BuilderInterface;
@@ -15,7 +15,7 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 
 /**
  * Class SpoutBuilder
- * @package Builder
+ * @package Builder\Builders
  */
 class SpoutBuilder implements BuilderInterface
 {

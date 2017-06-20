@@ -1,6 +1,6 @@
 <?php
 
-namespace Builder;
+namespace Builder\Builders;
 
 use Builder\Traits\BuilderFilesTrait;
 use Builder\Interfaces\BuilderInterface;
@@ -11,7 +11,7 @@ use PHPExcel_Style_Alignment;
 
 /**
  * Class PHPExcelBuilder
- * @package Builder
+ * @package Builder\Builders
  */
 class PHPExcelBuilder implements BuilderInterface
 {

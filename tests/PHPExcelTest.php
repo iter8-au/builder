@@ -28,7 +28,7 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
         $app->register(new BuilderServiceProvider());
 
         // Assert
-        $this->assertInstanceOf('Builder\PHPExcelBuilder', $app['builder']->getBuilder());
+        $this->assertInstanceOf('Builder\Builders\PHPExcelBuilder', $app['builder']->getBuilder());
     }
 
     /**
