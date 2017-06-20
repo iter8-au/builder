@@ -248,14 +248,12 @@ class Builder
         // Build column headers.
         $this->builder->buildHeaderRow($data[0], $style);
 
-        // Remove the first element (header row) of the $data array.
-        $headers = array_shift($data);
-
+        // Build all the rows now.
         $this->builder->buildRows($data);
 
         // If no column widths are specified, then simply auto-size all columns.
         if (!$this->hasColumnWidths()) {
-            $this->builder->autoSizeColumns($headers);
+            $this->builder->autoSizeColumns($data[0]);
         }
 
         // Rename sheet.

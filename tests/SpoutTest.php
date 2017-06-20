@@ -100,14 +100,14 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
                     'Column 3' => 'column_3',
                 ],
                 [
-                    'column_1' => '1',
-                    'column_2' => 'Two',
-                    'column_3' => '333'
+                    'Column 1' => '1',
+                    'Column 2' => 'Two',
+                    'Column 3' => '333'
                 ],
                 [
-                    'column_1' => 'One',
-                    'column_2' => '2',
-                    'column_3' => 'Three x 3'
+                    'Column 1' => 'One',
+                    'Column 2' => '2',
+                    'Column 3' => 'Three x 3'
                 ],
             ]
         );
@@ -151,26 +151,18 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
             [
                 [
                     [
-                        'Column 1' => 'column_1',
-                        'Column 2' => 'column_2',
-                    ],
-                    [
-                        'Row 1',
-                        'Sheet 1',
+                        'Column 1' => 'Row 1',
+                        'Column 2' => 'Sheet 1',
                     ],
                 ],
                 [
                     [
-                        'Column 1' => 'column_1',
-                        'Column 2' => 'column_2',
+                        'Column 1' => 'Row 2',
+                        'Column 2' => 'Sheet 2',
                     ],
                     [
-                        'Row 2',
-                        'Sheet 2',
-                    ],
-                    [
-                        'Row 3',
-                        'Sheet 2',
+                        'Column 1' => 'Row 3',
+                        'Column 2' => 'Sheet 2',
                     ],
                 ],
             ]
