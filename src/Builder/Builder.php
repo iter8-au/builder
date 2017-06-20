@@ -2,6 +2,7 @@
 
 namespace Builder;
 
+use Builder\Interfaces\BuilderInterface;
 use UnexpectedValueException;
 
 /**

@@ -12,8 +12,8 @@ interface BuilderInterface
     const ALIGNMENT_CENTRE = 'ALIGNMENT_CENTRE';
     const ALIGNMENT_RIGHT  = 'ALIGNMENT_RIGHT';
 
-    const FILL_SOLID = 'FILL_SOLID';
-    const FILL_NONE  = 'FILL_NONE';
+    const FILL_SOLID       = 'FILL_SOLID';
+    const FILL_NONE        = 'FILL_NONE';
 
     const COLOUR_BLACK_RGB = '000000';
     const COLOUR_WHITE_RGB = 'FFFFFF';
@@ -99,12 +99,12 @@ interface BuilderInterface
     /**
      * @param  array $style
      *
-     * @return mixed
+     * @return mixed Depending on the builder this can return an array or a specific class.
      */
     public function buildRowStyle(array $style);
 
     /**
-     * @param  array $columns
+     * @param  array      $columns
      * @param  mixed|null $style
      *
      * @return void
@@ -112,9 +112,9 @@ interface BuilderInterface
     public function buildHeaderRow($columns, $style = null);
 
     /**
-     * @param  array $row
+     * @param  array      $row
      * @param  mixed|null $style
-     * @param  int $rowIndex
+     * @param  int        $rowIndex
      *
      * @return void
      */
@@ -123,6 +123,7 @@ interface BuilderInterface
     /**
      * @param  array      $rows
      * @param  mixed|null $style
+     *
      * @return void
      */
     public function buildRows($rows, $style = null);

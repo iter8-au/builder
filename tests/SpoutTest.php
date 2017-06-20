@@ -2,7 +2,7 @@
 
 namespace Builder\Tests;
 
-use Builder\BuilderInterface;
+use Builder\Interfaces\BuilderInterface;
 use Builder\Interfaces\BuilderTestInterface;
 use Builder\Provider\BuilderServiceProvider;
 use Silex\Application;
@@ -213,6 +213,8 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
-        //$fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/spout');
+        if (is_dir(__DIR__ . '/cache/spout') === true) {
+            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/spout');
+        }
     }
 }
