@@ -324,11 +324,20 @@ class PHPExcelBuilder implements BuilderInterface
         for ($columnIndex = 0; $columnIndex <= $columnCount; $columnIndex++) {
             $this->builder->getActiveSheet()->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
         }
+    }
 
-//        foreach (array_keys($data[0]) as $key) {
-//            $this->builder->getActiveSheet()->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
-//
-//            $columnIndex++;
-//        }
+    /**
+     * @param  string $type Type of writer we should use.  Defaults to Excel2007 file type.
+     *
+     * @return void
+     *
+     * @throws \PHPExcel_Reader_Exception
+     * @throws \PHPExcel_Writer_Exception
+     */
+    public function closeAndWrite($type = 'Excel2007')
+    {
+        $writer = PHPExcel_IOFactory::createWriter($this->builder, $type);
+
+        $writer->save($this->getTempName());
     }
 }

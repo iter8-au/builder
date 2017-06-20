@@ -31,6 +31,13 @@ interface BuilderInterface
     public function setCacheDir($cacheDir);
 
     /**
+     * Path to the temporary file.
+     *
+     * @return string
+     */
+    public function getTempName();
+
+    /**
      * @return string
      */
     public function getCacheName();
@@ -85,6 +92,11 @@ interface BuilderInterface
     public function setSheetTitle($title);
 
     /**
+     * @return void
+     */
+    public function createNewSheet();
+
+    /**
      * @param  array $style
      *
      * @return mixed
@@ -131,4 +143,11 @@ interface BuilderInterface
      * @return void
      */
     public function autoSizeColumns(array $columns, $sheet = null);
+
+    /**
+     * @param  string $type
+     *
+     * @return void
+     */
+    public function closeAndWrite($type = '');
 }

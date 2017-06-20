@@ -44,7 +44,7 @@ class SpoutBuilder implements BuilderInterface
      */
     public function initialise()
     {
-        $this->writer->openToFile($this->getCacheName());
+        $this->writer->openToFile($this->getTempName());
 
         $this->setAsInitialised();
     }
@@ -103,9 +103,22 @@ class SpoutBuilder implements BuilderInterface
      * @param  int $sheetIndex
      *
      * @return $this
+     *
+     * @throws \Box\Spout\Writer\Exception\SheetNotFoundException
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
      */
     public function setActiveSheetIndex($sheetIndex)
     {
+        $sheets = $this->writer->getSheets();
+
+        if (!isset($sheets[$sheetIndex])) {
+            throw new SheetNotFoundException(
+                'The given sheet does not exist in the workbook.'
+            );
+        }
+
+        $this->writer->setCurrentSheet($sheets[$sheetIndex]);
+
         return $this;
     }
 
@@ -127,6 +140,16 @@ class SpoutBuilder implements BuilderInterface
         $this->writer->getCurrentSheet()->setName($title);
 
         return $this;
+    }
+
+    /**
+     * @return void
+     *
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     */
+    public function createNewSheet()
+    {
+        $this->writer->addNewSheetAndMakeItCurrent();
     }
 
     /**
@@ -252,5 +275,15 @@ class SpoutBuilder implements BuilderInterface
     public function autoSizeColumns(array $columns, $sheet = null)
     {
         // Spout doesn't support auto-sizing of columns yet.
+    }
+
+    /**
+     * @param  string $type
+     *
+     * @return void
+     */
+    public function closeAndWrite($type = '')
+    {
+        $this->writer->close();
     }
 }
