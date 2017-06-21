@@ -3,8 +3,7 @@
 namespace Builder\Provider\Silex;
 
 use Builder\Builder;
-use Builder\Builders\SpoutBuilder;
-use Builder\Builders\PHPExcelBuilder;
+use Pimple;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 
@@ -14,38 +13,41 @@ use Silex\ServiceProviderInterface;
  */
 class BuilderServiceProvider implements ServiceProviderInterface
 {
+    private $builderMappings = [
+        'spout'    => 'Builder\Builders\SpoutBuilder',
+        'phpexcel' => 'Builder\Builders\PHPExcelBuilder',
+    ];
+
     public function register(Application $app)
     {
         $app['builder.default_options'] = [
-            'driver'    => 'phpexcel',
+            'default'   => 'phpexcel',
             'cache_dir' => __DIR__ . '/../../../../../../../../cache/builder',
         ];
 
-        $app['builder'] = $app->share(function ($app) {
+        $app['builders'] = $app->share(function ($app) {
             $cacheDir = !empty($app['builder.cache_dir'])
                       ? $app['builder.cache_dir']
                       : $app['builder.default_options']['cache_dir'];
 
-            switch ($app['builder.driver']) {
-                case 'spout':
-                    $builder = new Builder(
-                        new SpoutBuilder(),
+            $builders = new Pimple();
+
+            foreach ($this->builderMappings as $builderName => $builderClassMapping) {
+                $builders[$builderName] = $builders->share(function ($builders) use ($builderClassMapping, $cacheDir) {
+                    return new Builder(
+                        new $builderClassMapping(),
                         $cacheDir
                     );
-
-                    break;
-
-                case 'phpexcel':
-                default:
-                    $builder = new Builder(
-                        new PHPExcelBuilder(),
-                        $cacheDir
-                    );
-
-                    break;
+                });
             }
 
-            return $builder;
+            return $builders;
+        });
+
+        $app['builder'] = $app->share(function ($app) {
+            $builders = $app['builders'];
+
+            return $builders[$app['builder.default']];
         });
     }
 

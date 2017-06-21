@@ -24,7 +24,7 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
     {
         // Arrange
         $app = new Application();
-        $app['builder.driver'] = 'spout';
+        $app['builder.default']   = 'spout';
         $app['builder.cache_dir'] = __DIR__ . '/cache/spout';
 
         // Act
@@ -42,7 +42,7 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.driver'    => 'spout',
+            'builder.default'   => 'spout',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
@@ -85,7 +85,7 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.driver'    => 'spout',
+            'builder.default'   => 'spout',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
         // $reader = ReaderFactory::create(Type::XLSX);
@@ -136,7 +136,7 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.driver'    => 'spout',
+            'builder.default'   => 'spout',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 

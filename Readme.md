@@ -5,7 +5,7 @@ A wrapper for the PHPExcel and Spout libraries to help you quickly build Excel r
 ## Example Usage
 
 ```php
-$app['builder.driver']    = 'spout'; // or 'phpexcel'
+$app['builder.default']   = 'spout'; // or 'phpexcel'
 $app['builder.cache_dir'] = '/var/cache';
 
 $app->register(new BuilderServiceProvider());
@@ -13,7 +13,7 @@ $app->register(new BuilderServiceProvider());
 $app->register(
     new BuilderServiceProvider(),
     [
-        'builder.driver'    => 'phpexcel',
+        'builder.default'   => 'phpexcel',
         'builder.cache_dir' => '/var/cache',
     ]
 );
@@ -47,6 +47,8 @@ $builder->generate();
 // use generateExcel() to create the file.
 $builder->generateExcel();
 ```
+
+Both Builders are available under the `$app['builders']` key, but `$app['builder']` will be the default builder you specify.
 
 ## Feature Parity
 Feature | PHPExcel | Spout

@@ -14,7 +14,7 @@ use UnexpectedValueException;
 class Builder
 {
     const REPORT_EXCEL = 0;
-    const REPORT_CSV = 1;
+    const REPORT_CSV   = 1;
 
     const ALIGNMENT_CENTER  = 0;
     const ALIGNMENT_LEFT    = 1;
@@ -24,11 +24,6 @@ class Builder
      * @var int
      */
     private $reportType;
-
-    /**
-     * @var \PHPExcel
-     */
-    private $phpexcel;
 
     /**
      * @var BuilderInterface
@@ -67,6 +62,14 @@ class Builder
      */
     private $columnStyles;
 
+    /**
+     * Builder constructor.
+     *
+     * @param  \Builder\Interfaces\BuilderInterface $builder
+     * @param  string                               $reportCacheDir
+     *
+     * @return self
+     */
     public function __construct(
         BuilderInterface $builder,
         $reportCacheDir

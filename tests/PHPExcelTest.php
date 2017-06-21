@@ -21,7 +21,7 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
     {
         // Arrange
         $app = new Application();
-        $app['builder.driver'] = 'phpexcel';
+        $app['builder.default']   = 'phpexcel';
         $app['builder.cache_dir'] = __DIR__ . '/cache/phpexcel';
 
         // Act
@@ -39,7 +39,7 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.driver'    => 'phpexcel',
+            'builder.default'   => 'phpexcel',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
@@ -81,7 +81,7 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.driver'    => 'phpexcel',
+            'builder.default'   => 'phpexcel',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
