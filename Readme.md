@@ -2,6 +2,10 @@
 
 A wrapper for the PHPExcel and Spout libraries to help you quickly build Excel reports.
 
+## Requirements
+
+- Silex ~1.3
+
 ## Example Usage
 
 ```php
@@ -49,6 +53,12 @@ $builder->generateExcel();
 ```
 
 Both Builders are available under the `$app['builders']` key, but `$app['builder']` will be the default builder you specify.
+
+### PHPExcel
+Accessible via `$app['builders']['phpexcel']`.
+
+### Spout
+Accessible via `$app['builders']['spout']`.
 
 ## Feature Parity
 Feature | PHPExcel | Spout
