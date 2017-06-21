@@ -31,5 +31,9 @@
     "psr-4": {
       "Builder\\": "src/Builder"
     }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "coverage": "phpunit --coverage-html=./builder_coverage"
   }
 }

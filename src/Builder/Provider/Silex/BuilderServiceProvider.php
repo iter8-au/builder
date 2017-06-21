@@ -25,15 +25,24 @@ class BuilderServiceProvider implements ServiceProviderInterface
             'cache_dir' => __DIR__ . '/../../../../../../../../cache/builder',
         ];
 
-        $app['builders'] = $app->share(function ($app) {
-            $cacheDir = !empty($app['builder.cache_dir'])
-                      ? $app['builder.cache_dir']
-                      : $app['builder.default_options']['cache_dir'];
+        // Merge default builder option.
+        $app['builder.default'] = isset($app['builder.default'])
+                                ? $app['builder.default']
+                                : $app['builder.default_options']['default'];
 
+        // Merge cache_dir option.
+        $app['builder.cache_dir'] = isset($app['builder.cache_dir'])
+                                  ? $app['builder.cache_dir']
+                                  : $app['builder.default_options']['cache_dir'];
+
+        $app['builders'] = $app->share(function ($app) {
+            $cacheDir = $app['builder.cache_dir'];
+
+            // Initialise new Pimple container.
             $builders = new Pimple();
 
             foreach ($this->builderMappings as $builderName => $builderClassMapping) {
-                $builders[$builderName] = $builders->share(function ($builders) use ($builderClassMapping, $cacheDir) {
+                $builders[$builderName] = $builders->share(function () use ($builderClassMapping, $cacheDir) {
                     return new Builder(
                         new $builderClassMapping(),
                         $cacheDir
@@ -54,5 +63,15 @@ class BuilderServiceProvider implements ServiceProviderInterface
     public function boot(Application $app)
     {
         //
+    }
+
+    /**
+     * @param  string $builderName
+     *
+     * @return string Fully qualified class name (FQCN) for the specified Builder class.
+     */
+    public static function mapBuilderToClass($builderName)
+    {
+        return (new self)->builderMappings[$builderName];
     }
 }
