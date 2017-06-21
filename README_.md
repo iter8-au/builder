@@ -75,10 +75,17 @@ Multiple Sheets | Yes | Yes
 
 ### Todo
 
-* Allow both caching when building a report as well as short term or perm-caching to a configured location
+* Allow both caching when building a report as well as short term or perm-caching to a configured location.
+* Support for Silex 2.*
 
 ## Testing
 
 Minimal tests can be performed with PHPUnit.
 
-`./vendor/bin/phpunit`
+### Unit Tests
+`composer test` or  `./vendor/bin/phpunit`
+
+### Code Coverage
+`composer coverage`
+
+These will be available in `./builder_coverage`.
