@@ -1,22 +1,39 @@
 {
   "name": "iter8/builder",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "description": "A wrapper for the PHP Excel library to help you quickly build reports",
-  "keywords": ["phpexcel", "reports"],
-  "homepage": "http://github.com/iter8-au/builder",
+  "keywords": ["phpexcel", "reports", "excel", "spout"],
+  "license": "proprietary",
+  "homepage": "https://github.com/iter8-au/builder",
   "type": "library",
   "authors": [
     {
       "name": "Dean Smith",
       "email": "dean@iter8.com.au",
       "homepage": "http://iter8.com.au"
+    },
+    {
+      "name": "Dan Barrett",
+      "email": "dan@iter8.com.au",
+      "homepage": "http://iter8.com.au"
     }
   ],
   "require": {
     "php": "^5.4",
-    "phpoffice/phpexcel": "~1.8"
+    "phpoffice/phpexcel": "~1.8",
+    "box/spout": "^2.7"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8",
+    "silex/silex": "^1.0"
   },
   "autoload": {
-    "psr-4": {"Builder\\": "src/Builder"}
+    "psr-4": {
+      "Builder\\": "src/Builder"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "coverage": "phpunit --coverage-html=./builder_coverage"
   }
 }

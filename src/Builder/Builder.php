@@ -1,20 +1,20 @@
 <?php
-/**
- * @author Dean Smith <dean@iter8.com.au>
- * @link https://github.com/iter8-au/builder
- */
+
 namespace Builder;
+
+use Builder\Interfaces\BuilderInterface;
+use UnexpectedValueException;
 
 /**
  * Helper for easily generating cached Excel or CSV files, ready to download, from an array of data.
  *
- * Class ReportService
- * @package SD\Vendo\Service
+ * Class Builder
+ * @package Builder
  */
 class Builder
 {
     const REPORT_EXCEL = 0;
-    const REPORT_CSV = 1;
+    const REPORT_CSV   = 1;
 
     const ALIGNMENT_CENTER  = 0;
     const ALIGNMENT_LEFT    = 1;
@@ -26,9 +26,9 @@ class Builder
     private $reportType;
 
     /**
-     * @var \PHPExcel
+     * @var BuilderInterface
      */
-    private $phpexcel;
+    private $builder;
 
     private $reportCacheDir;
 
@@ -62,220 +62,205 @@ class Builder
      */
     private $columnStyles;
 
+    /**
+     * Builder constructor.
+     *
+     * @param  \Builder\Interfaces\BuilderInterface $builder
+     * @param  string                               $reportCacheDir
+     *
+     * @return self
+     */
     public function __construct(
-        \PHPExcel $phpexcel,
+        BuilderInterface $builder,
         $reportCacheDir
-    )
-    {
-        $this->setPHPExcel($phpexcel);
+    ) {
+        $this->setBuilder($builder);
         $this->setReportCacheDir($reportCacheDir);
 
-        // Default the report to Excel format (using PHPExcel)
+        $this->prepareBuilder();
+
+        // Default the report to Excel format.
         $this->setReportType(self::REPORT_EXCEL);
     }
 
     /**
-     * Generate the final report using whatever the set format is
+     * Prepares the builders.
+     *
+     * @return void
      */
-    public function generate(
-        $unlinkFlag = true
-    )
+    private function prepareBuilder()
     {
-        // Determine which format we are using and call the apppriate method
-        if ($this->getReportType() === self::REPORT_EXCEL) {
-            $this->generateExcel();
-        } else {
-            throw new \UnexpectedValueException("Attempted to generate a report in an unsupported format.");
-        }
+        $this->builder
+             ->setCacheDir($this->getReportCacheDir())
+             ->initialise();
     }
 
+    /**
+     * Get the temp filename for the Excel builder.
+     *
+     * @return string
+     */
+    public function getTempName()
+    {
+        return $this->builder->getTempName();
+    }
+
+    /**
+     * Generate the final report using whatever the set format is.
+     *
+     * @param  bool $unlinkFlag
+     *
+     * @return void
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function generate($unlinkFlag = true) {
+        // Determine which format we are using and call the appropriate method.
+        if ($this->getReportType() === self::REPORT_EXCEL) {
+            $this->generateExcel();
+
+            // Output headers
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Content-Type: application/force-download');
+            header('Content-Type: application/octet-stream');
+            header('Content-Type: application/download');
+            header('Content-Disposition: attachment;filename=' . $this->getFilename() . '.xlsx');
+            header('Content-Transfer-Encoding: binary ');
+
+            readfile($this->builder->getTempName());
+            unlink($this->builder->getTempName());
+
+            exit;
+        }
+
+        throw new UnexpectedValueException('Attempted to generate a report in an unsupported format.');
+    }
+
+    /**
+     * Generates an Excel document.
+     *
+     * @return void
+     */
     public function generateExcel()
     {
-        $objPHPExcel = $this->getPhpexcel();
-        $reportArray = $this->getData();
-
-        // Set properties from Service values
-        $objPHPExcel->getProperties()->setCreator($this->getCreator());
-        $objPHPExcel->getProperties()->setLastModifiedBy($this->getCreator());
-        $objPHPExcel->getProperties()->setTitle($this->getTitle());
-        $objPHPExcel->getProperties()->setSubject($this->getTitle());
-        $objPHPExcel->getProperties()->setDescription($this->getDescription());
+        // Set Document Properties from Service values.
+        $this->builder
+             ->setCreator($this->getCreator())
+             ->setLastModifiedBy($this->getCreator())
+             ->setTitle($this->getTitle())
+             ->setSubject($this->getTitle())
+             ->setDescription($this->getDescription());
 
         if ($this->hasSheets()) {
-            // Multiple sheets
-            $this->createSheets(
-                $objPHPExcel
-            );
+            // Multiple sheets.
+            $this->createSheets();
         } else {
-            // Single sheet - these will be an array and a string
+            // Single sheet - these will be an array and a string.
             $reportArray = $this->getData();
-            $sheetTitle = $this->getSheetTitles();
+            $sheetTitle  = $this->getSheetTitles();
 
-            $objPHPExcel->setActiveSheetIndex(0);
+            $this->builder->setActiveSheetIndex(0);
 
             $this->createSheet(
-                $objPHPExcel,
                 $reportArray,
                 $sheetTitle
             );
         }
 
-        // Output headers
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-        header("Content-Type: application/force-download");
-        header("Content-Type: application/octet-stream");
-        header("Content-Type: application/download");;
-        header("Content-Disposition: attachment;filename=" . $this->getFilename() . ".xlsx");
-        header("Content-Transfer-Encoding: binary ");
-
-        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        ob_end_clean();
-
-        // Write output then exit() to prevent page content being appended to .xlsx file
-        $filePath = $this->getReportCacheDir() . "\\" . rand(0, getrandmax()) . rand(0, getrandmax()) . ".tmp";
-        $objWriter->save($filePath);
-        readfile($filePath);
-        unlink($filePath);
-        exit();
+        // Close the builder and write the file.
+        $this->builder->closeAndWrite();
     }
 
     /**
-     * @param $phpExcel
+     * @return void
+     *
+     * @throws \UnexpectedValueException
      */
-    public function createSheets(&$phpExcel)
+    public function createSheets()
     {
         $sheets = $this->getSheets();
-
         $titles = $this->getSheetTitles();
 
         $totalSheets = count($sheets);
-        $sheetCount = 0;
+        $sheetCount  = 0;
 
         if (empty($sheets) || !is_array($sheets)) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'Expected an array of sheets data but got an empty value or non-array.'
             );
         }
 
-        // We have to set the initial active sheet
-        $phpExcel->setActiveSheetIndex($sheetCount);
+        // We have to set the initial active sheet.
+        $this->builder->setActiveSheetIndex($sheetCount);
 
         foreach ($sheets as $sheet) {
             $this->createSheet(
-                $phpExcel,
                 $sheet,
                 $titles[$sheetCount]
             );
 
-            // Only create a new sheet if we actually have a data array for it
+            // Only create a new sheet if we actually have a data array for it.
             if ($sheetCount < ($totalSheets - 1)) {
-                $phpExcel->createSheet();
+                $this->builder->createNewSheet();
 
-                // Increment the active sheet count and move to that sheet
+                // Increment the active sheet count and move to that sheet.
                 $sheetCount++;
-                $phpExcel->setActiveSheetIndex($sheetCount);
+                $this->builder->setActiveSheetIndex($sheetCount);
             }
         }
 
-        // Finally switch back to the first sheet
-        $phpExcel->setActiveSheetIndex(0);
-
-        return;
+        // Finally switch back to the first sheet.
+        $this->builder->setActiveSheetIndex(0);
     }
 
     /**
-     * @param $phpExcel
-     * @param $data
-     * @param $title
+     * @param  array  $data
+     * @param  string $title
+     *
+     * @return void
      */
-    public function createSheet(
-        &$phpExcel,
-        $data,
-        $title
-    ) {
-        // Check if we are setting any custom column widths
+    public function createSheet(array $data, $title) {
+        // Check if we are setting any custom column widths.
         if ($this->hasColumnWidths()) {
             // We have a numeric index array, so create an array of letters that we can use to map to Excel columns.
             // e.g. 0 = A, 3 = D, etc.
             $columns = range('A', 'Z');
 
-            // Loop through all of our column values -  we only set values for columns that we actually have
-            foreach ($this->getColumnWidths() as $columnKey => $columnWidth) {
-                $phpExcel->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
-            }
+            $this->builder->applyColumnWidths($columns, $this->getColumnWidths());
         }
 
         // Style settings for agent headers
-        // http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object
-        $styleArray = array(
-            'alignment' => array(
-                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-            ),
-            'font' => array(
-                'color' => array(
-                    'rgb' => 'FFFFFF'
-                ),
-                'bold' => true
-            ),
-            'fill' => array(
-                'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-                'color' => array('rgb' => '000000')
-            )
-        );
+        $style = $this->builder->buildRowStyle([
+            'alignment' => BuilderInterface::ALIGNMENT_CENTRE,
+            'font'      => [
+                'color' => [
+                    'rgb' => BuilderInterface::COLOUR_WHITE_RGB,
+                ],
+                'bold'  => true,
+            ],
+            'fill'      => [
+                'type'  => BuilderInterface::FILL_SOLID,
+                'color' => [
+                    'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
+                ],
+            ],
+        ]);
 
-        // The row needs to start at 1 at the beginning of execution
-        // the top left corner of the sheet is actually position (col = 0, row = 1)
-        // http://stackoverflow.com/questions/2584954/phpexcel-how-to-set-cell-value-dynamically
-        $row = 1;
+        // Build column headers.
+        $this->builder->buildHeaderRow($data[0], $style);
 
-        // Build column headers
-        $col = 0;
-        foreach (array_keys($data[0]) as $key) {
-            // Set the header value
-            $phpExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $key);
+        // Build all the rows now.
+        $this->builder->buildRows($data);
 
-            // Apply header style to column headers
-            $phpExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray($styleArray);
-
-            $col++;
-        }
-
-        $row++;
-
-        // Build each data row
-        foreach ($data as $record) {
-            $col = 0;
-            foreach ($record as $column) {
-                $phpExcel->getActiveSheet()->setCellValueByColumnAndRow($col, $row, $column);
-
-                if ($this->hasColumnStylesForColumn($col)) {
-                    // Apply style to column
-                    $phpExcel->getActiveSheet()->getStyleByColumnAndRow($col, $row)->applyFromArray(
-                        $this->getPHPExcelColumnStylesForColumn($col)
-                    );
-                }
-
-                $col++;
-            }
-
-            $row++;
-        }
-
-        // If no column widths are specified, then simply auto-size all columns
+        // If no column widths are specified, then simply auto-size all columns.
         if (!$this->hasColumnWidths()) {
-            $col = 0;
-            foreach (array_keys($data[0]) as $key) {
-                $phpExcel->getActiveSheet()->getColumnDimensionByColumn($col)->setAutoSize(true);
-                $col++;
-            }
+            $this->builder->autoSizeColumns($data[0]);
         }
 
-        // Rename sheet
-        $phpExcel->getActiveSheet()->setTitle($title);
-
-        return;
+        // Rename sheet.
+        $this->builder->setSheetTitle($title);
     }
 
 
@@ -296,7 +281,8 @@ class Builder
     }
 
     /**
-     * @param int $reportType
+     * @param  int $reportType
+     *
      * @return $this
      */
     public function setReportType($reportType)
@@ -307,7 +293,7 @@ class Builder
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCreator()
     {
@@ -315,7 +301,8 @@ class Builder
     }
 
     /**
-     * @param mixed $creator
+     * @param  string $creator
+     *
      * @return $this
      */
     public function setCreator($creator)
@@ -334,10 +321,11 @@ class Builder
     }
 
     /**
-     * @param $data
+     * @param  array $data
+     *
      * @return $this
      */
-    public function setData($data)
+    public function setData(array $data)
     {
         $this->data = $data;
 
@@ -345,7 +333,7 @@ class Builder
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getDescription()
     {
@@ -353,7 +341,8 @@ class Builder
     }
 
     /**
-     * @param mixed $description
+     * @param  string $description
+     *
      * @return $this
      */
     public function setDescription($description)
@@ -364,7 +353,7 @@ class Builder
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getFilename()
     {
@@ -372,7 +361,8 @@ class Builder
     }
 
     /**
-     * @param mixed $filename
+     * @param  string $filename
+     *
      * @return $this
      */
     public function setFilename($filename)
@@ -385,7 +375,7 @@ class Builder
     /**
      * TODO: If > 31 characters, and PHPExcel, then sub_str? (31 characters in an Excel title limit)
      *
-     * @return mixed
+     * @return string
      */
     public function getTitle()
     {
@@ -393,7 +383,8 @@ class Builder
     }
 
     /**
-     * @param mixed $title
+     * @param  string $title
+     *
      * @return $this
      */
     public function setTitle($title)
@@ -404,26 +395,27 @@ class Builder
     }
 
     /**
-     * @return \PHPExcel
+     * @return \Builder\BuilderInterface
      */
-    public function getPhpexcel()
+    public function getBuilder()
     {
-        return $this->phpexcel;
+        return $this->builder;
     }
 
     /**
-     * @param \PHPExcel $phpexcel
+     * @param  \Builder\BuilderInterface $builder
+     *
      * @return $this
      */
-    public function setPhpexcel(\PHPExcel $phpexcel)
+    public function setBuilder(BuilderInterface $builder)
     {
-        $this->phpexcel = $phpexcel;
+        $this->builder = $builder;
 
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getReportCacheDir()
     {
@@ -431,7 +423,8 @@ class Builder
     }
 
     /**
-     * @param $reportCacheDir
+     * @param  string$reportCacheDir
+     *
      * @return $this
      */
     public function setReportCacheDir($reportCacheDir)
@@ -480,7 +473,8 @@ class Builder
     }
 
     /**
-     * @param $columnIndex
+     * @param  int $columnIndex
+     *
      * @return bool
      */
     public function hasColumnStylesForColumn($columnIndex)
@@ -495,7 +489,8 @@ class Builder
     }
 
     /**
-     * @param $columnIndex
+     * @param  int $columnIndex
+     *
      * @return bool|array
      */
     public function getColumnStylesForColumn($columnIndex)
@@ -568,7 +563,8 @@ class Builder
     }
 
     /**
-     * @param array $columnStyles
+     * @param  array $columnStyles
+     *
      * @return $this
      */
     public function setColumnStyles(array $columnStyles)
@@ -578,7 +574,9 @@ class Builder
         return $this;
     }
 
-
+    /**
+     * @return bool
+     */
     public function hasSheets()
     {
         $sheets = $this->sheets;
@@ -586,21 +584,41 @@ class Builder
         return !empty($sheets);
     }
 
+    /**
+     * @param  array $sheets
+     *
+     * @return $this
+     */
     public function setSheets(array $sheets)
     {
         $this->sheets = $sheets;
+
+        return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getSheets()
     {
         return $this->sheets;
     }
 
+    /**
+     * @param  string|array $sheetTitles
+     *
+     * @return $this
+     */
     public function setSheetTitles($sheetTitles)
     {
         $this->sheetTitles = $sheetTitles;
+
+        return $this;
     }
 
+    /**
+     * @return string|array
+     */
     public function getSheetTitles()
     {
         return $this->sheetTitles;
