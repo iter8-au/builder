@@ -4,7 +4,7 @@ A wrapper for the PHPExcel and Spout libraries to help you quickly build Excel r
 
 ## Requirements
 
-- Silex ~1.3
+- Silex ~2.x
 
 ## Example Usage
 
@@ -76,7 +76,6 @@ Multiple Sheets | Yes | Yes
 ### Todo
 
 * Allow both caching when building a report as well as short term or perm-caching to a configured location.
-* Support for Silex 2.*
 
 ## Testing
 
