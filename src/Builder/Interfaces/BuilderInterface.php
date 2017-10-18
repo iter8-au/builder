@@ -4,7 +4,6 @@ namespace Builder\Interfaces;
 
 /**
  * Interface BuilderInterface
- * @package Builder\Interfaces
  */
 interface BuilderInterface
 {
@@ -26,7 +25,7 @@ interface BuilderInterface
     /**
      * @param  string $cacheDir
      *
-     * @return $this
+     * @return BuilderInterface
      */
     public function setCacheDir($cacheDir);
 
@@ -45,49 +44,49 @@ interface BuilderInterface
     /**
      * @param  string|null $creator
      *
-     * @return $this
+     * @return BuilderInterface
      */
     public function setCreator($creator);
 
     /**
      * @param  string|null $lastModifiedBy
      *
-     * @return $this
+     * @return BuilderInterface
      */
     public function setLastModifiedBy($lastModifiedBy);
 
     /**
      * @param  string|null $title
      *
-     * @return $this
+     * @return BuilderInterface
      */
     public function setTitle($title);
 
     /**
      * @param  string|null $subject
      *
-     * @return $this
+     * @return BuilderInterface
      */
     public function setSubject($subject);
 
     /**
      * @param  string|null $description
      *
-     * @return $this
+     * @return BuilderInterface
      */
     public function setDescription($description);
 
     /**
      * @param  int $sheetIndex
      *
-     * @return $this
+     * @return BuilderInterface
      */
     public function setActiveSheetIndex($sheetIndex);
 
     /**
      * @param  string $title
      *
-     * @return $this
+     * @return BuilderInterface
      */
     public function setSheetTitle($title);
 

@@ -10,19 +10,23 @@ use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Writer\AbstractMultiSheetsWriter;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
+use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
+use Box\Spout\Writer\Exception\InvalidSheetNameException;
 
 /**
  * Class SpoutBuilder
- * @package Builder\Builders
  */
 class SpoutBuilder implements BuilderInterface
 {
     use BuilderFilesTrait, InitialisationStateTrait;
 
     /**
-     * @var \Box\Spout\Writer\AbstractMultiSheetsWriter
+     * @var AbstractMultiSheetsWriter
      */
     private $writer;
 
@@ -41,7 +45,7 @@ class SpoutBuilder implements BuilderInterface
     /**
      * @return void
      *
-     * @throws \Box\Spout\Common\Exception\IOException
+     * @throws IOException
      */
     public function initialise()
     {
@@ -105,8 +109,8 @@ class SpoutBuilder implements BuilderInterface
      *
      * @return $this
      *
-     * @throws \Box\Spout\Writer\Exception\SheetNotFoundException
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @throws SheetNotFoundException
+     * @throws WriterNotOpenedException
      */
     public function setActiveSheetIndex($sheetIndex)
     {
@@ -128,9 +132,9 @@ class SpoutBuilder implements BuilderInterface
      *
      * @return $this
      *
-     * @throws \Box\Spout\Common\Exception\IOException
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
-     * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException
+     * @throws IOException
+     * @throws WriterNotOpenedException
+     * @throws InvalidSheetNameException
      */
     public function setSheetTitle($title)
     {
@@ -146,7 +150,7 @@ class SpoutBuilder implements BuilderInterface
     /**
      * @return void
      *
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @throws WriterNotOpenedException
      */
     public function createNewSheet()
     {
@@ -156,7 +160,7 @@ class SpoutBuilder implements BuilderInterface
     /**
      * @param  array $style
      *
-     * @return \Box\Spout\Writer\Style\Style
+     * @return Style
      */
     public function buildRowStyle(array $style)
     {
@@ -189,9 +193,9 @@ class SpoutBuilder implements BuilderInterface
      * @param array $columns
      * @param mixed|null $style
      *
-     * @throws \Box\Spout\Common\Exception\IOException
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @throws IOException
+     * @throws InvalidArgumentException
+     * @throws WriterNotOpenedException
      */
     public function buildHeaderRow($columns, $style = null)
     {
@@ -215,9 +219,9 @@ class SpoutBuilder implements BuilderInterface
      *
      * @return void
      *
-     * @throws \Box\Spout\Common\Exception\IOException
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @throws IOException
+     * @throws InvalidArgumentException
+     * @throws WriterNotOpenedException
      */
     public function buildRow($row, $style = null, $rowIndex = 1)
     {
@@ -238,9 +242,9 @@ class SpoutBuilder implements BuilderInterface
      *
      * @return void
      *
-     * @throws \Box\Spout\Common\Exception\IOException
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @throws IOException
+     * @throws InvalidArgumentException
+     * @throws WriterNotOpenedException
      */
     public function buildRows($rows, $style = null)
     {
@@ -268,7 +272,7 @@ class SpoutBuilder implements BuilderInterface
     }
 
     /**
-     * @param  array $columns
+     * @param  array    $columns
      * @param  int|null $sheet
      *
      * @return void

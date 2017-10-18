@@ -3,22 +3,22 @@
 namespace Builder\Provider\Silex;
 
 use Builder\Builder;
-use Pimple;
-use Silex\Application;
-use Silex\ServiceProviderInterface;
+use Builder\Builders\SpoutBuilder;
+use Builder\Builders\PHPExcelBuilder;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 
 /**
  * Class BuilderServiceProvider
- * @package Builder\Provider\Silex
  */
 class BuilderServiceProvider implements ServiceProviderInterface
 {
     private $builderMappings = [
-        'spout'    => 'Builder\Builders\SpoutBuilder',
-        'phpexcel' => 'Builder\Builders\PHPExcelBuilder',
+        'spout'    => SpoutBuilder::class,
+        'phpexcel' => PHPExcelBuilder::class,
     ];
 
-    public function register(Application $app)
+    public function register(Container $app)
     {
         $app['builder.default_options'] = [
             'default'   => 'phpexcel',
@@ -35,34 +35,29 @@ class BuilderServiceProvider implements ServiceProviderInterface
                                   ? $app['builder.cache_dir']
                                   : $app['builder.default_options']['cache_dir'];
 
-        $app['builders'] = $app->share(function ($app) {
+        $app['builders'] = function ($app) {
             $cacheDir = $app['builder.cache_dir'];
 
             // Initialise new Pimple container.
-            $builders = new Pimple();
+            $builders = new Container();
 
             foreach ($this->builderMappings as $builderName => $builderClassMapping) {
-                $builders[$builderName] = $builders->share(function () use ($builderClassMapping, $cacheDir) {
+                $builders[$builderName] = function () use ($builderClassMapping, $cacheDir) {
                     return new Builder(
                         new $builderClassMapping(),
                         $cacheDir
                     );
-                });
+                };
             }
 
             return $builders;
-        });
+        };
 
-        $app['builder'] = $app->share(function ($app) {
+        $app['builder'] = function ($app) {
             $builders = $app['builders'];
 
             return $builders[$app['builder.default']];
-        });
-    }
-
-    public function boot(Application $app)
-    {
-        //
+        };
     }
 
     /**

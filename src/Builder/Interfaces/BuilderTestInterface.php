@@ -4,7 +4,6 @@ namespace Builder\Interfaces;
 
 /**
  * Interface BuilderTestInterface
- * @package Builder\Interfaces
  */
 interface BuilderTestInterface
 {
