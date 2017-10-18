@@ -2,18 +2,19 @@
 
 namespace Builder\Tests;
 
+use Builder\Builders\SpoutBuilder;
 use Builder\Interfaces\BuilderInterface;
 use Builder\Interfaces\BuilderTestInterface;
 use Builder\Provider\Silex\BuilderServiceProvider;
 use Silex\Application;
 use PHPUnit_Framework_TestCase;
 use Box\Spout\Writer\Style\Color;
+use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Common\Helper\FileSystemHelper;
 
 /**
  * Class SpoutTest
- * @package Builder\Tests
  */
 class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterface
 {
@@ -31,7 +32,7 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
         $app->register(new BuilderServiceProvider());
 
         // Assert
-        $this->assertInstanceOf('Builder\Builders\SpoutBuilder', $app['builder']->getBuilder());
+        $this->assertInstanceOf(SpoutBuilder::class, $app['builder']->getBuilder());
     }
 
     /**
@@ -71,7 +72,7 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
         $styleBuilderStyle = $styleBuilder->build();
 
         // Assert
-        $this->assertInstanceOf('Box\Spout\Writer\Style\Style', $style);
+        $this->assertInstanceOf(Style::class, $style);
         $this->assertSame($style->serialize(), $styleBuilderStyle->serialize());
     }
 

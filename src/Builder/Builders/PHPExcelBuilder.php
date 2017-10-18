@@ -11,7 +11,6 @@ use PHPExcel_Style_Alignment;
 
 /**
  * Class PHPExcelBuilder
- * @package Builder\Builders
  */
 class PHPExcelBuilder implements BuilderInterface
 {
