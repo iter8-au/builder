@@ -4,7 +4,6 @@ namespace Builder\Traits;
 
 /**
  * Trait InitialisationStateTrait
- * @package Builder\Traits
  */
 trait InitialisationStateTrait
 {

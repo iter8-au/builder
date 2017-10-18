@@ -4,7 +4,6 @@ namespace Builder\Traits;
 
 /**
  * Trait BuilderFilesTrait
- * @package Builder\Traits
  */
 trait BuilderFilesTrait
 {

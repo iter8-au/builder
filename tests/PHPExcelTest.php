@@ -2,6 +2,7 @@
 
 namespace Builder\Tests;
 
+use Builder\Builders\PHPExcelBuilder;
 use Builder\Interfaces\BuilderTestInterface;
 use Builder\Provider\Silex\BuilderServiceProvider;
 use Silex\Application;
@@ -10,7 +11,6 @@ use Box\Spout\Common\Helper\FileSystemHelper;
 
 /**
  * Class PHPExcelTest
- * @package Builder\Tests
  */
 class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInterface
 {
@@ -28,7 +28,7 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
         $app->register(new BuilderServiceProvider());
 
         // Assert
-        $this->assertInstanceOf('Builder\Builders\PHPExcelBuilder', $app['builder']->getBuilder());
+        $this->assertInstanceOf(PHPExcelBuilder::class, $app['builder']->getBuilder());
     }
 
     /**
