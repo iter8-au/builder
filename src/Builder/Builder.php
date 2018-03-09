@@ -3,6 +3,8 @@
 namespace Builder;
 
 use Builder\Interfaces\BuilderInterface;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use UnexpectedValueException;
 
 /**
@@ -373,7 +375,7 @@ class Builder
     }
 
     /**
-     * TODO: If > 31 characters, and PHPExcel, then sub_str? (31 characters in an Excel title limit)
+     * TODO: If > 31 characters, and PhpSpreadsheet, then sub_str? (31 characters in an Excel title limit)
      *
      * @return string
      */
@@ -511,7 +513,7 @@ class Builder
      * @param $columnIndex
      * @return array
      */
-    private function getPHPExcelColumnStylesForColumn($columnIndex) {
+    private function getPhpSpreadsheetColumnStylesForColumn($columnIndex) {
         $phpExcelStyleArray = [];
 
         $styleArray = $this->getColumnStylesForColumn($columnIndex);
@@ -523,17 +525,17 @@ class Builder
         // Alignment
         if (isset($styleArray['alignment'])) {
             if ($styleArray['alignment'] === self::ALIGNMENT_CENTER) {
-                $phpExcelStyleArray['alignment']['horizontal'] = \PHPExcel_Style_Alignment::HORIZONTAL_CENTER;
+                $phpExcelStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_CENTER;
             } else if ($styleArray['alignment'] === self::ALIGNMENT_LEFT) {
-                $phpExcelStyleArray['alignment']['horizontal'] = \PHPExcel_Style_Alignment::HORIZONTAL_LEFT;
+                $phpExcelStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_LEFT;
             } else if ($styleArray['alignment'] === self::ALIGNMENT_RIGHT) {
-                $phpExcelStyleArray['alignment']['horizontal'] = \PHPExcel_Style_Alignment::HORIZONTAL_RIGHT;
+                $phpExcelStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_RIGHT;
             }
         }
 
         if (isset($styleArray['fill'])) {
             $phpExcelStyleArray['fill'] = [
-                'type' => \PHPExcel_Style_Fill::FILL_SOLID,
+                'type' => Fill::FILL_SOLID,
                 'color' => [
                     'rgb' => $styleArray['fill']
                 ]

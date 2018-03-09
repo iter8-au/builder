@@ -23,7 +23,7 @@ class SilexServiceProviderTest extends PHPUnit_Framework_TestCase
 
         // Act
         $app->register(new BuilderServiceProvider());
-        // Even though we hard-code 'phpexcel' as the default in the class, we're fetching it here too just to make sure.
+        // Even though we hard-code 'phpspreadsheet' as the default in the class, we're fetching it here too just to make sure.
         $defaultDriverClass = BuilderServiceProvider::mapBuilderToClass($app['builder.default']);
 
         // Assert
@@ -33,26 +33,26 @@ class SilexServiceProviderTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function spout_builder_is_available_when_phpexcel_is_default()
+    public function spout_builder_is_available_when_phpspreadsheet_is_default()
     {
         // Arrange
         $app = new Application();
 
         // Act
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpexcel',
+            'builder.default'   => 'phpspreadsheet',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
         // Assert
-        $this->assertInstanceOf('Builder\Builders\PHPExcelBuilder', $app['builder']->getBuilder());
+        $this->assertInstanceOf('Builder\Builders\PhpSpreadsheet', $app['builder']->getBuilder());
         $this->assertInstanceOf('Builder\Builders\SpoutBuilder', $app['builders']['spout']->getBuilder());
     }
 
     /**
      * @test
      */
-    public function phpexcel_builder_is_available_when_spout_is_default()
+    public function phpspreadsheet_builder_is_available_when_spout_is_default()
     {
         // Arrange
         $app = new Application();
@@ -65,7 +65,7 @@ class SilexServiceProviderTest extends PHPUnit_Framework_TestCase
 
         // Assert
         $this->assertInstanceOf('Builder\Builders\SpoutBuilder', $app['builder']->getBuilder());
-        $this->assertInstanceOf('Builder\Builders\PHPExcelBuilder', $app['builders']['phpexcel']->getBuilder());
+        $this->assertInstanceOf('Builder\Builders\PhpSpreadsheet', $app['builders']['phpspreadsheet']->getBuilder());
     }
 
     /**

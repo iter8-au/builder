@@ -4,29 +4,29 @@ namespace Builder\Builders;
 
 use Builder\Traits\BuilderFilesTrait;
 use Builder\Interfaces\BuilderInterface;
-use PHPExcel;
-use PHPExcel_IOFactory;
-use PHPExcel_Style_Fill;
-use PHPExcel_Style_Alignment;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 /**
- * Class PHPExcelBuilder
+ * Class PhpSpreadsheet
  */
-class PHPExcelBuilder implements BuilderInterface
+class PhpSpreadsheet implements BuilderInterface
 {
     use BuilderFilesTrait;
 
     /**
-     * @var \PHPExcel
+     * @var Spreadsheet
      */
     private $builder;
 
     /**
-     * PHPExcelBuilder constructor.
+     * PhpSpreadsheet constructor.
      */
     public function __construct()
     {
-        $this->builder = new PHPExcel();
+        $this->builder = new Spreadsheet();
     }
 
     /**
@@ -34,7 +34,7 @@ class PHPExcelBuilder implements BuilderInterface
      */
     public function initialise()
     {
-        // No initialisation required for the PHPExcel library.
+        // No initialisation required for the PhpSpreadsheet library.
     }
 
     /**
@@ -98,11 +98,10 @@ class PHPExcelBuilder implements BuilderInterface
     }
 
     /**
-     * @param  int $sheetIndex
+     * @param int $sheetIndex
      *
-     * @return $this
-     *
-     * @throws \PHPExcel_Exception
+     * @return $this|BuilderInterface
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function setActiveSheetIndex($sheetIndex)
     {
@@ -112,11 +111,10 @@ class PHPExcelBuilder implements BuilderInterface
     }
 
     /**
-     * @param  string $title
+     * @param string $title
      *
-     * @return $this
-     *
-     * @throws \PHPExcel_Exception
+     * @return $this|BuilderInterface
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function setSheetTitle($title)
     {
@@ -126,9 +124,7 @@ class PHPExcelBuilder implements BuilderInterface
     }
 
     /**
-     * @return void
-     *
-     * @throws \PHPExcel_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function createNewSheet()
     {
@@ -147,7 +143,7 @@ class PHPExcelBuilder implements BuilderInterface
         $finalStyleArray   = [];
         $defaultStyleArray = [
             'alignment' => [
-                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                'horizontal' => Alignment::HORIZONTAL_LEFT,
             ],
             'font'      => [
                 'color' => [
@@ -156,7 +152,7 @@ class PHPExcelBuilder implements BuilderInterface
                 'bold' => true,
             ],
             'fill'      => [
-                'type'  => PHPExcel_Style_Fill::FILL_SOLID,
+                'type'  => Fill::FILL_SOLID,
                 'color' => [
                     'rgb' => '000000',
                 ],
@@ -168,19 +164,19 @@ class PHPExcelBuilder implements BuilderInterface
         } else {
             switch ($style['alignment']) {
                 case 'right':
-                    $finalStyleArray['alignment']['horizontal'] = PHPExcel_Style_Alignment::HORIZONTAL_RIGHT;
+                    $finalStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_RIGHT;
 
                     break;
 
                 case 'centre':
                 case 'center':
-                    $finalStyleArray['alignment']['horizontal'] = PHPExcel_Style_Alignment::HORIZONTAL_CENTER;
+                    $finalStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_CENTER;
 
                     break;
 
                 case 'left':
                 default:
-                    $finalStyleArray['alignment']['horizontal'] = PHPExcel_Style_Alignment::HORIZONTAL_LEFT;
+                    $finalStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_LEFT;
 
                     break;
             }
@@ -199,13 +195,13 @@ class PHPExcelBuilder implements BuilderInterface
 
             switch ($fill['type']) {
                 case 'none':
-                    $fill['type'] = PHPExcel_Style_Fill::FILL_NONE;
+                    $fill['type'] = Fill::FILL_NONE;
 
                     break;
 
                 case 'solid':
                 default:
-                    $fill['type'] = PHPExcel_Style_Fill::FILL_SOLID;
+                    $fill['type'] = Fill::FILL_SOLID;
 
                     break;
             }
@@ -217,12 +213,10 @@ class PHPExcelBuilder implements BuilderInterface
     }
 
     /**
-     * @param  array $columns
-     * @param  mixed $style
+     * @param array $columns
+     * @param null  $style
      *
-     * @return void
-     *
-     * @throws \PHPExcel_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function buildHeaderRow($columns, $style = null)
     {
@@ -246,13 +240,11 @@ class PHPExcelBuilder implements BuilderInterface
     }
 
     /**
-     * @param  array      $row
-     * @param  mixed|null $style
-     * @param  int        $rowIndex
+     * @param array $row
+     * @param null  $style
+     * @param int   $rowIndex
      *
-     * @return void
-     *
-     * @throws \PHPExcel_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function buildRow($row, $style = null, $rowIndex = 1)
     {
@@ -273,7 +265,7 @@ class PHPExcelBuilder implements BuilderInterface
      *
      * @return void
      *
-     * @throws \PHPExcel_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function buildRows($rows, $style = null)
     {
@@ -301,7 +293,7 @@ class PHPExcelBuilder implements BuilderInterface
      *
      * @return void
      *
-     * @throws \PHPExcel_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function applyColumnWidths(array $columns, array $widths, $sheet = null)
     {
@@ -321,7 +313,7 @@ class PHPExcelBuilder implements BuilderInterface
      *
      * @return void
      *
-     * @throws \PHPExcel_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     public function autoSizeColumns(array $columns, $sheet = null)
     {
@@ -337,16 +329,13 @@ class PHPExcelBuilder implements BuilderInterface
     }
 
     /**
-     * @param  string $type Type of writer we should use.  Defaults to Excel2007 file type.
+     * @param string $type Type of writer we should use.  Defaults to Xlsx file type.
      *
-     * @return void
-     *
-     * @throws \PHPExcel_Reader_Exception
-     * @throws \PHPExcel_Writer_Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      */
-    public function closeAndWrite($type = 'Excel2007')
+    public function closeAndWrite($type = 'Xlsx')
     {
-        $writer = PHPExcel_IOFactory::createWriter($this->builder, $type);
+        $writer = IOFactory::createWriter($this->builder, $type);
 
         $writer->save($this->getTempName());
     }

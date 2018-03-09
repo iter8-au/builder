@@ -3,8 +3,8 @@
 namespace Builder\Provider\Silex;
 
 use Builder\Builder;
+use Builder\Builders\PhpSpreadsheet;
 use Builder\Builders\SpoutBuilder;
-use Builder\Builders\PHPExcelBuilder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -14,14 +14,14 @@ use Pimple\ServiceProviderInterface;
 class BuilderServiceProvider implements ServiceProviderInterface
 {
     private $builderMappings = [
-        'spout'    => SpoutBuilder::class,
-        'phpexcel' => PHPExcelBuilder::class,
+        'spout'          => SpoutBuilder::class,
+        'phpspreadsheet' => PhpSpreadsheet::class,
     ];
 
     public function register(Container $app)
     {
         $app['builder.default_options'] = [
-            'default'   => 'phpexcel',
+            'default'   => 'phpspreadsheet',
             'cache_dir' => __DIR__ . '/../../../../../../../../cache/builder',
         ];
 
