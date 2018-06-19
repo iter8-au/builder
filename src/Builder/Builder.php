@@ -238,16 +238,16 @@ class Builder
             'alignment' => BuilderInterface::ALIGNMENT_CENTRE,
             'font'      => [
                 'color' => [
-                    'rgb' => BuilderInterface::COLOUR_WHITE_RGB,
+                    'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
                 ],
                 'bold'  => true,
             ],
-            'fill'      => [
-                'type'  => BuilderInterface::FILL_SOLID,
-                'color' => [
-                    'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
-                ],
-            ],
+            //'fill'      => [
+            //    'type'  => BuilderInterface::FILL_SOLID,
+            //    'color' => [
+            //        'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
+            //    ],
+            //],
         ]);
 
         // Build column headers.
