@@ -147,7 +147,7 @@ class PhpSpreadsheet implements BuilderInterface
             ],
             'font'      => [
                 'color' => [
-                    'rgb' => 'FFFFFF',
+                    'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
                 ],
                 'bold' => true,
             ],
