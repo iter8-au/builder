@@ -1,6 +1,6 @@
 {
   "name": "iter8/builder",
-  "version": "2.0.0",
+  "version": "3.0.1",
   "description": "A wrapper for the PHP Excel library to help you quickly build reports",
   "keywords": ["phpexcel", "reports", "excel", "spout", "silex"],
   "license": "proprietary",
