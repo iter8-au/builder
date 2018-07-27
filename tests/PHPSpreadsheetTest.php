@@ -1,18 +1,18 @@
 <?php
 
-namespace Builder\Tests;
+namespace Tests\Builder;
 
+use Box\Spout\Common\Helper\FileSystemHelper;
 use Builder\Builders\PhpSpreadsheet;
 use Builder\Interfaces\BuilderTestInterface;
 use Builder\Provider\Silex\BuilderServiceProvider;
+use PHPUnit\Framework\TestCase;
 use Silex\Application;
-use PHPUnit_Framework_TestCase;
-use Box\Spout\Common\Helper\FileSystemHelper;
 
 /**
  * Class PHPExcelTest
  */
-class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInterface
+class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
 {
     /**
      * @test
@@ -21,8 +21,8 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
     {
         // Arrange
         $app = new Application();
-        $app['builder.default']   = 'phpexcel';
-        $app['builder.cache_dir'] = __DIR__ . '/cache/phpexcel';
+        $app['builder.default']   = 'phpspreadsheet';
+        $app['builder.cache_dir'] = __DIR__ . '/cache/phpspreadsheet';
 
         // Act
         $app->register(new BuilderServiceProvider());
@@ -39,7 +39,7 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpexcel',
+            'builder.default'   => 'phpspreadsheet',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
@@ -81,7 +81,7 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpexcel',
+            'builder.default'   => 'phpspreadsheet',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
@@ -126,7 +126,7 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
      */
     private function getCacheDir()
     {
-        return __DIR__ . '/cache/phpexcel';
+        return __DIR__ . '/cache/phpspreadsheet';
     }
 
     /**
@@ -136,8 +136,8 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
-        if (is_dir(__DIR__ . '/cache/phpexcel') === false) {
-            $fileSystemHelper->createFolder(__DIR__ . '/cache', 'phpexcel');
+        if (is_dir(__DIR__ . '/cache/phpspreadsheet') === false) {
+            $fileSystemHelper->createFolder(__DIR__ . '/cache', 'phpspreadsheet');
         }
     }
 
@@ -148,8 +148,8 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
-        if (is_dir(__DIR__ . '/cache/phpexcel') === true) {
-            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpexcel');
+        if (is_dir(__DIR__ . '/cache/phpspreadsheet') === true) {
+            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpspreadsheet');
         }
     }
 }

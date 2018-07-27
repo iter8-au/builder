@@ -1,22 +1,22 @@
 <?php
 
-namespace Builder\Tests;
+namespace Tests\Builder;
 
+use Box\Spout\Common\Helper\FileSystemHelper;
+use Box\Spout\Writer\Style\Color;
+use Box\Spout\Writer\Style\Style;
+use Box\Spout\Writer\Style\StyleBuilder;
 use Builder\Builders\SpoutBuilder;
 use Builder\Interfaces\BuilderInterface;
 use Builder\Interfaces\BuilderTestInterface;
 use Builder\Provider\Silex\BuilderServiceProvider;
+use PHPUnit\Framework\TestCase;
 use Silex\Application;
-use PHPUnit_Framework_TestCase;
-use Box\Spout\Writer\Style\Color;
-use Box\Spout\Writer\Style\Style;
-use Box\Spout\Writer\Style\StyleBuilder;
-use Box\Spout\Common\Helper\FileSystemHelper;
 
 /**
  * Class SpoutTest
  */
-class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterface
+class SpoutTest extends TestCase implements BuilderTestInterface
 {
     /**
      * @test
@@ -54,17 +54,11 @@ class SpoutTest extends PHPUnit_Framework_TestCase implements BuilderTestInterfa
                 ],
                 'bold' => true,
             ],
-            'fill' => [
-                'color' => [
-                    'rgb' => BuilderInterface::COLOUR_WHITE_RGB,
-                ],
-            ],
         ];
 
         $styleBuilder = new StyleBuilder();
         $styleBuilder->setFontColor(Color::toARGB(BuilderInterface::COLOUR_BLACK_RGB))
-                     ->setFontBold()
-                     ->setBackgroundColor(Color::toARGB(BuilderInterface::COLOUR_WHITE_RGB));
+                     ->setFontBold();
 
         // Act
         /** @var \Box\Spout\Writer\Style\Style $style */

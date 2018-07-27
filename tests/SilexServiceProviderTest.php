@@ -1,17 +1,18 @@
 <?php
 
-namespace Builder\Tests;
+namespace Tests\Builder;
 
-use Builder\Provider\Silex\BuilderServiceProvider;
-use Silex\Application;
-use PHPUnit_Framework_TestCase;
 use Box\Spout\Common\Helper\FileSystemHelper;
+use Builder\Builders\PhpSpreadsheet;
+use Builder\Builders\SpoutBuilder;
+use Builder\Provider\Silex\BuilderServiceProvider;
+use PHPUnit\Framework\TestCase;
+use Silex\Application;
 
 /**
  * Class SilexServiceProviderTest
- * @package Builder\Tests
  */
-class SilexServiceProviderTest extends PHPUnit_Framework_TestCase
+class SilexServiceProviderTest extends TestCase
 {
     /**
      * @test
@@ -40,13 +41,13 @@ class SilexServiceProviderTest extends PHPUnit_Framework_TestCase
 
         // Act
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpspreadsheet',
+            'builder.default' => 'phpspreadsheet',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
         // Assert
-        $this->assertInstanceOf('Builder\Builders\PhpSpreadsheet', $app['builder']->getBuilder());
-        $this->assertInstanceOf('Builder\Builders\SpoutBuilder', $app['builders']['spout']->getBuilder());
+        $this->assertInstanceOf(PhpSpreadsheet::class, $app['builder']->getBuilder());
+        $this->assertInstanceOf(SpoutBuilder::class, $app['builders']['spout']->getBuilder());
     }
 
     /**
@@ -59,13 +60,13 @@ class SilexServiceProviderTest extends PHPUnit_Framework_TestCase
 
         // Act
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'spout',
+            'builder.default' => 'spout',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
         // Assert
-        $this->assertInstanceOf('Builder\Builders\SpoutBuilder', $app['builder']->getBuilder());
-        $this->assertInstanceOf('Builder\Builders\PhpSpreadsheet', $app['builders']['phpspreadsheet']->getBuilder());
+        $this->assertInstanceOf(SpoutBuilder::class, $app['builder']->getBuilder());
+        $this->assertInstanceOf(PhpSpreadsheet::class, $app['builders']['phpspreadsheet']->getBuilder());
     }
 
     /**

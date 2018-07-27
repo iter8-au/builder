@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Builder;
 
 use Builder\Interfaces\BuilderInterface;
@@ -11,27 +13,29 @@ use UnexpectedValueException;
  * Helper for easily generating cached Excel or CSV files, ready to download, from an array of data.
  *
  * Class Builder
- * @package Builder
  */
 class Builder
 {
-    const REPORT_EXCEL = 0;
-    const REPORT_CSV   = 1;
+    public const REPORT_EXCEL = 0;
+    public const REPORT_CSV   = 1;
 
-    const ALIGNMENT_CENTER  = 0;
-    const ALIGNMENT_LEFT    = 1;
-    const ALIGNMENT_RIGHT   = 2;
+    public const ALIGNMENT_CENTER  = 0;
+    public const ALIGNMENT_LEFT    = 1;
+    public const ALIGNMENT_RIGHT   = 2;
 
     /**
      * @var int
      */
-    private $reportType;
+    private $reportType = self::REPORT_EXCEL;
 
     /**
      * @var BuilderInterface
      */
     private $builder;
 
+    /**
+     * @var string
+     */
     private $reportCacheDir;
 
     /**
@@ -39,14 +43,26 @@ class Builder
      */
     private $data;
 
+    /**
+     * @var null|string
+     */
     private $creator;
 
+    /**
+     * @var null|string
+     */
     private $title;
 
     private $sheetTitles;
 
+    /**
+     * @var null|string
+     */
     private $description;
 
+    /**
+     * @var null|string
+     */
     private $filename;
 
     /**
@@ -67,22 +83,17 @@ class Builder
     /**
      * Builder constructor.
      *
-     * @param  \Builder\Interfaces\BuilderInterface $builder
-     * @param  string                               $reportCacheDir
-     *
-     * @return self
+     * @param BuilderInterface $builder
+     * @param string           $reportCacheDir
      */
     public function __construct(
         BuilderInterface $builder,
-        $reportCacheDir
+        string $reportCacheDir
     ) {
         $this->setBuilder($builder);
         $this->setReportCacheDir($reportCacheDir);
 
         $this->prepareBuilder();
-
-        // Default the report to Excel format.
-        $this->setReportType(self::REPORT_EXCEL);
     }
 
     /**
@@ -90,11 +101,13 @@ class Builder
      *
      * @return void
      */
-    private function prepareBuilder()
+    private function prepareBuilder(): void
     {
         $this->builder
              ->setCacheDir($this->getReportCacheDir())
              ->initialise();
+
+        return;
     }
 
     /**
@@ -102,7 +115,7 @@ class Builder
      *
      * @return string
      */
-    public function getTempName()
+    public function getTempName(): string
     {
         return $this->builder->getTempName();
     }
@@ -113,8 +126,6 @@ class Builder
      * @param  bool $unlinkFlag
      *
      * @return void
-     *
-     * @throws \UnexpectedValueException
      */
     public function generate($unlinkFlag = true) {
         // Determine which format we are using and call the appropriate method.
@@ -145,7 +156,7 @@ class Builder
      *
      * @return void
      */
-    public function generateExcel()
+    public function generateExcel(): void
     {
         // Set Document Properties from Service values.
         $this->builder
@@ -173,14 +184,14 @@ class Builder
 
         // Close the builder and write the file.
         $this->builder->closeAndWrite();
+
+        return;
     }
 
     /**
      * @return void
-     *
-     * @throws \UnexpectedValueException
      */
-    public function createSheets()
+    public function createSheets(): void
     {
         $sheets = $this->getSheets();
         $titles = $this->getSheetTitles();
@@ -215,15 +226,20 @@ class Builder
 
         // Finally switch back to the first sheet.
         $this->builder->setActiveSheetIndex(0);
+
+        return;
     }
 
     /**
-     * @param  array  $data
-     * @param  string $title
+     * @param array $data
+     * @param string $title
      *
      * @return void
      */
-    public function createSheet(array $data, $title) {
+    public function createSheet(
+        array $data,
+        string $title
+    ): void {
         // Check if we are setting any custom column widths.
         if ($this->hasColumnWidths()) {
             // We have a numeric index array, so create an array of letters that we can use to map to Excel columns.
@@ -242,12 +258,6 @@ class Builder
                 ],
                 'bold'  => true,
             ],
-            //'fill'      => [
-            //    'type'  => BuilderInterface::FILL_SOLID,
-            //    'color' => [
-            //        'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
-            //    ],
-            //],
         ]);
 
         // Build column headers.
@@ -277,17 +287,17 @@ class Builder
     /**
      * @return int
      */
-    public function getReportType()
+    public function getReportType(): int
     {
         return $this->reportType;
     }
 
     /**
-     * @param  int $reportType
+     * @param int $reportType
      *
      * @return $this
      */
-    public function setReportType($reportType)
+    public function setReportType(int $reportType): self
     {
         $this->reportType = $reportType;
 
@@ -295,19 +305,19 @@ class Builder
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getCreator()
+    public function getCreator(): ?string
     {
         return $this->creator;
     }
 
     /**
-     * @param  string $creator
+     * @param string $creator
      *
      * @return $this
      */
-    public function setCreator($creator)
+    public function setCreator($creator): self
     {
         $this->creator = $creator;
 
@@ -317,17 +327,17 @@ class Builder
     /**
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
     /**
-     * @param  array $data
+     * @param array $data
      *
      * @return $this
      */
-    public function setData(array $data)
+    public function setData(array $data): self
     {
         $this->data = $data;
 
@@ -335,19 +345,19 @@ class Builder
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
     /**
-     * @param  string $description
+     * @param string $description
      *
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -357,17 +367,17 @@ class Builder
     /**
      * @return string
      */
-    public function getFilename()
+    public function getFilename(): string
     {
         return $this->filename;
     }
 
     /**
-     * @param  string $filename
+     * @param string $filename
      *
      * @return $this
      */
-    public function setFilename($filename)
+    public function setFilename(string $filename): self
     {
         $this->filename = $filename;
 
@@ -375,41 +385,46 @@ class Builder
     }
 
     /**
-     * TODO: If > 31 characters, and PhpSpreadsheet, then sub_str? (31 characters in an Excel title limit)
-     *
-     * @return string
+     * @return null|string
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
-     * @param  string $title
+     * Note: if the title is longer than 31 characters it'll be trimmed.
+     * This is due to a limit in Excel.
+     *
+     * @param string $title
      *
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle(string $title): self
     {
+        if (strlen($title) > 31) {
+            $title = mb_substr($title, 0, 31);
+        }
+
         $this->title = $title;
 
         return $this;
     }
 
     /**
-     * @return \Builder\BuilderInterface
+     * @return BuilderInterface
      */
-    public function getBuilder()
+    public function getBuilder(): BuilderInterface
     {
         return $this->builder;
     }
 
     /**
-     * @param  \Builder\BuilderInterface $builder
+     * @param BuilderInterface $builder
      *
      * @return $this
      */
-    public function setBuilder(BuilderInterface $builder)
+    public function setBuilder(BuilderInterface $builder): self
     {
         $this->builder = $builder;
 
@@ -419,17 +434,17 @@ class Builder
     /**
      * @return string
      */
-    public function getReportCacheDir()
+    public function getReportCacheDir(): string
     {
         return $this->reportCacheDir;
     }
 
     /**
-     * @param  string$reportCacheDir
+     * @param string $reportCacheDir
      *
      * @return $this
      */
-    public function setReportCacheDir($reportCacheDir)
+    public function setReportCacheDir(string $reportCacheDir): self
     {
         $this->reportCacheDir = $reportCacheDir;
 
@@ -439,7 +454,8 @@ class Builder
     /**
      * @return bool
      */
-    public function hasColumnWidths() {
+    public function hasColumnWidths(): bool
+    {
         $columnWidths = $this->getColumnWidths();
 
         return !empty($columnWidths);
@@ -454,10 +470,11 @@ class Builder
     }
 
     /**
-     * @param $columnWidths
+     * @param array $columnWidths
+     *
      * @return $this
      */
-    public function setColumnWidths(array $columnWidths)
+    public function setColumnWidths(array $columnWidths): self
     {
         $this->columnWidths = $columnWidths;
 
@@ -467,7 +484,7 @@ class Builder
     /**
      * @return bool
      */
-    public function hasColumnStyles()
+    public function hasColumnStyles(): bool
     {
         $columnStyles = $this->getColumnStyles();
 
@@ -475,11 +492,11 @@ class Builder
     }
 
     /**
-     * @param  int $columnIndex
+     * @param int $columnIndex
      *
      * @return bool
      */
-    public function hasColumnStylesForColumn($columnIndex)
+    public function hasColumnStylesForColumn($columnIndex): bool
     {
         if (!$this->hasColumnStyles()) {
             return false;
@@ -491,7 +508,7 @@ class Builder
     }
 
     /**
-     * @param  int $columnIndex
+     * @param int $columnIndex
      *
      * @return bool|array
      */
@@ -503,7 +520,7 @@ class Builder
 
         $columnStyles = $this->getColumnStyles();
 
-        return isset($columnStyles[$columnIndex]) ? $columnStyles[$columnIndex] : false;
+        return $columnStyles[$columnIndex] ?? false;
     }
 
     /**
@@ -565,11 +582,11 @@ class Builder
     }
 
     /**
-     * @param  array $columnStyles
+     * @param array $columnStyles
      *
      * @return $this
      */
-    public function setColumnStyles(array $columnStyles)
+    public function setColumnStyles(array $columnStyles): self
     {
         $this->columnStyles = $columnStyles;
 
@@ -579,7 +596,7 @@ class Builder
     /**
      * @return bool
      */
-    public function hasSheets()
+    public function hasSheets(): bool
     {
         $sheets = $this->sheets;
 
@@ -587,11 +604,11 @@ class Builder
     }
 
     /**
-     * @param  array $sheets
+     * @param array $sheets
      *
      * @return $this
      */
-    public function setSheets(array $sheets)
+    public function setSheets(array $sheets): self
     {
         $this->sheets = $sheets;
 
@@ -601,13 +618,13 @@ class Builder
     /**
      * @return array
      */
-    public function getSheets()
+    public function getSheets(): array
     {
         return $this->sheets;
     }
 
     /**
-     * @param  string|array $sheetTitles
+     * @param string|array $sheetTitles
      *
      * @return $this
      */

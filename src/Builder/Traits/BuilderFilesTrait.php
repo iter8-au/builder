@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Builder\Traits;
 
 /**
@@ -13,16 +15,14 @@ trait BuilderFilesTrait
     private $cacheDir;
 
     /**
-     * @var string
+     * @var null|string
      */
     private $cacheName;
 
     /**
-     * Path to the temporary file.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getTempName()
+    public function getTempName(): string
     {
         return sprintf(
             '%s.tmp',
@@ -31,15 +31,15 @@ trait BuilderFilesTrait
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getCacheName()
+    public function getCacheName(): string
     {
-        if (empty($this->cacheName)) {
-            return $this->cacheName = sprintf(
+        if (null === $this->cacheName) {
+            $this->cacheName = sprintf(
                 '%s/%s.xlsx',
                 $this->cacheDir,
-                md5(microtime() . mt_rand(0, mt_getrandmax()))
+                md5(microtime() . random_int(0, mt_getrandmax()))
             );
         }
 
@@ -47,11 +47,9 @@ trait BuilderFilesTrait
     }
 
     /**
-     * @param  string $cacheDir
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function setCacheDir($cacheDir)
+    public function setCacheDir(string $cacheDir)
     {
         $this->cacheDir = $cacheDir;
 

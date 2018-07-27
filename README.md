@@ -1,6 +1,6 @@
 # Builder
 
-A wrapper for the PHPExcel and Spout libraries to help you quickly build Excel reports.
+A wrapper for the PhpSpreadsheet and Spout libraries to help you quickly build Excel reports.
 
 ## Requirements
 
@@ -9,7 +9,7 @@ A wrapper for the PHPExcel and Spout libraries to help you quickly build Excel r
 ## Example Usage
 
 ```php
-$app['builder.default']   = 'spout'; // or 'phpexcel'
+$app['builder.default']   = 'spout'; // or 'phpspreadsheet'
 $app['builder.cache_dir'] = '/var/cache';
 
 $app->register(new BuilderServiceProvider());
@@ -17,7 +17,7 @@ $app->register(new BuilderServiceProvider());
 $app->register(
     new BuilderServiceProvider(),
     [
-        'builder.default'   => 'phpexcel',
+        'builder.default'   => 'phpspreadsheet',
         'builder.cache_dir' => '/var/cache',
     ]
 );
@@ -39,11 +39,11 @@ $reportArray = [
 
 $builder->setSheets($reportArray);
 
-$builder->setCreator('Workflow');
-$builder->setTitle('Day Report');
-$builder->setSheetTitles(['Data']);
-$builder->setDescription('The Workflow Day Report');
-$builder->setFilename('Workflow-Day_Report_' . $startDate->format('d_m_Y'));
+$builder->setCreator('App Name');
+$builder->setTitle('My Spreadsheet');
+$builder->setSheetTitles(['Sheet 1']);
+$builder->setDescription('Spreadsheet that contains some data');
+$builder->setFilename('App_Name_Spreadsheet_' . $startDate->format('d_m_Y'));
 
 // use generate() to output headers and force file download.
 $builder->generate();
@@ -54,14 +54,14 @@ $builder->generateExcel();
 
 Both Builders are available under the `$app['builders']` key, but `$app['builder']` will be the default builder you specify.
 
-### PHPExcel
-Accessible via `$app['builders']['phpexcel']`.
+### PhpSpreadsheet
+Accessible via `$app['builders']['phpspreadsheet']`.
 
 ### Spout
 Accessible via `$app['builders']['spout']`.
 
 ## Feature Parity
-Feature | PHPExcel | Spout
+Feature | PhpSpreadsheet | Spout
 ------- | -------- | -----
 Cell Alignment | Yes | No
 Auto-sizing Columns | Yes | No
@@ -82,7 +82,7 @@ Multiple Sheets | Yes | Yes
 Minimal tests can be performed with PHPUnit.
 
 ### Unit Tests
-`composer test` or  `./vendor/bin/phpunit`
+`composer tests` or  `./vendor/bin/phpunit`
 
 ### Code Coverage
 `composer coverage`

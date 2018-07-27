@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Builder\Builders;
 
-use Builder\Traits\BuilderFilesTrait;
 use Builder\Interfaces\BuilderInterface;
+use Builder\Traits\BuilderFilesTrait;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -30,19 +32,17 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * @return void
+     * {@inheritdoc}
      */
-    public function initialise()
+    public function initialise(): void
     {
         // No initialisation required for the PhpSpreadsheet library.
     }
 
     /**
-     * @param  string|null $creator
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function setCreator($creator)
+    public function setCreator(?string $creator = null)
     {
         $this->builder->getProperties()->setCreator($creator);
 
@@ -50,11 +50,9 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * @param  string|null $lastModifiedBy
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function setLastModifiedBy($lastModifiedBy)
+    public function setLastModifiedBy(?string $lastModifiedBy = null)
     {
         $this->builder->getProperties()->setLastModifiedBy($lastModifiedBy);
 
@@ -62,11 +60,9 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * @param  string|null $title
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function setTitle($title)
+    public function setTitle(?string $title = null)
     {
         $this->builder->getProperties()->setTitle($title);
 
@@ -74,11 +70,9 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * @param  string|null $subject
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function setSubject($subject)
+    public function setSubject(?string $subject = null)
     {
         $this->builder->getProperties()->setSubject($subject);
 
@@ -86,11 +80,9 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * @param  string|null $description
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function setDescription($description)
+    public function setDescription(?string $description = null)
     {
         $this->builder->getProperties()->setDescription($description);
 
@@ -98,12 +90,9 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * @param int $sheetIndex
-     *
-     * @return $this|BuilderInterface
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * {@inheritdoc}
      */
-    public function setActiveSheetIndex($sheetIndex)
+    public function setActiveSheetIndex(int $sheetIndex = 1)
     {
         $this->builder->setActiveSheetIndex($sheetIndex);
 
@@ -111,12 +100,9 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * @param string $title
-     *
-     * @return $this|BuilderInterface
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * {@inheritdoc}
      */
-    public function setSheetTitle($title)
+    public function setSheetTitle(string $title)
     {
         $this->builder->getActiveSheet()->setTitle($title);
 
@@ -124,17 +110,21 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * {@inheritdoc}
      */
-    public function createNewSheet()
+    public function createNewSheet(): void
     {
-        $this->builder->createSheet();
+        $newSheet = $this->builder->createSheet();
+
+        $newSheetIndex = $this->builder->getIndex($newSheet);
+
+        $this->setActiveSheetIndex($newSheetIndex);
     }
 
     /**
      * http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object
      *
-     * @param  array $style
+     * @param array $style
      *
      * @return array
      */
@@ -188,38 +178,16 @@ class PhpSpreadsheet implements BuilderInterface
             $finalStyleArray['font'] = $style['font'];
         }
 
-        if (!array_key_exists('fill', $style)) {
-            $finalStyleArray['style'] = $defaultStyleArray['fill'];
-        } else {
-            $fill = $style['fill'];
-
-            switch ($fill['type']) {
-                case 'none':
-                    $fill['type'] = Fill::FILL_NONE;
-
-                    break;
-
-                case 'solid':
-                default:
-                    $fill['type'] = Fill::FILL_SOLID;
-
-                    break;
-            }
-
-            $finalStyleArray['fill'] = $fill;
-        }
-
         return $finalStyleArray;
     }
 
     /**
-     * @param array $columns
-     * @param null  $style
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * {@inheritdoc}
      */
-    public function buildHeaderRow($columns, $style = null)
-    {
+    public function buildHeaderRow(
+        array $columns,
+        $style = null
+    ): void {
         // The row needs to start at 1 at the beginning of execution.
         // The top left corner of the sheet is actually position (col = 0, row = 1).
         $row    = 1;
@@ -237,17 +205,18 @@ class PhpSpreadsheet implements BuilderInterface
 
             $column++;
         }
+
+        return;
     }
 
     /**
-     * @param array $row
-     * @param null  $style
-     * @param int   $rowIndex
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * {@inheritdoc}
      */
-    public function buildRow($row, $style = null, $rowIndex = 1)
-    {
+    public function buildRow(
+        array $row,
+        $style = null,
+        $rowIndex = 1
+    ): void {
         $columnIndex = 0;
 
         foreach ($row as $column) {
@@ -255,20 +224,19 @@ class PhpSpreadsheet implements BuilderInterface
 
             $columnIndex++;
         }
+
+        return;
     }
 
     /**
      * http://stackoverflow.com/questions/2584954/phpexcel-how-to-set-cell-value-dynamically
      *
-     * @param  array      $rows
-     * @param  mixed|null $style
-     *
-     * @return void
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * {@inheritdoc}
      */
-    public function buildRows($rows, $style = null)
-    {
+    public function buildRows(
+        array $rows,
+        $style = null
+    ): void {
         // The row needs to start at 1 at the beginning of execution.
         // The top left corner of the sheet is actually position (col = 0, row = 1).
         $rowIndex = 1;
@@ -284,19 +252,18 @@ class PhpSpreadsheet implements BuilderInterface
 
             $rowIndex++;
         }
+
+        return;
     }
 
     /**
-     * @param  array    $columns
-     * @param  array    $widths
-     * @param  int|null $sheet
-     *
-     * @return void
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * {@inheritdoc}
      */
-    public function applyColumnWidths(array $columns, array $widths, $sheet = null)
-    {
+    public function applyColumnWidths(
+        array $columns,
+        array $widths,
+        $sheet = null
+    ): void {
         if ($sheet !== null) {
             $this->builder->setActiveSheetIndex($sheet);
         }
@@ -305,18 +272,17 @@ class PhpSpreadsheet implements BuilderInterface
         foreach ($widths as $columnKey => $columnWidth) {
             $this->builder->getActiveSheet()->getColumnDimension($columns[$columnKey])->setWidth($columnWidth);
         }
+
+        return;
     }
 
     /**
-     * @param  array    $columns
-     * @param  int|null $sheet
-     *
-     * @return void
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * {@inheritdoc}
      */
-    public function autoSizeColumns(array $columns, $sheet = null)
-    {
+    public function autoSizeColumns(
+        array $columns,
+        $sheet = null
+    ): void {
         if ($sheet !== null) {
             $this->builder->setActiveSheetIndex($sheet);
         }
@@ -326,14 +292,14 @@ class PhpSpreadsheet implements BuilderInterface
         for ($columnIndex = 0; $columnIndex <= $columnCount; $columnIndex++) {
             $this->builder->getActiveSheet()->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
         }
+
+        return;
     }
 
     /**
-     * @param string $type Type of writer we should use.  Defaults to Xlsx file type.
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     * {@inheritdoc}
      */
-    public function closeAndWrite($type = 'Xlsx')
+    public function closeAndWrite(string $type = 'Xlsx'): void
     {
         $writer = IOFactory::createWriter($this->builder, $type);
 

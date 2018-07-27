@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Builder\Provider\Silex;
 
 use Builder\Builder;
@@ -14,26 +16,26 @@ use Pimple\ServiceProviderInterface;
 class BuilderServiceProvider implements ServiceProviderInterface
 {
     private $builderMappings = [
-        'spout'          => SpoutBuilder::class,
+        'spout' => SpoutBuilder::class,
         'phpspreadsheet' => PhpSpreadsheet::class,
     ];
 
+    /**
+     * {@inheritdoc}
+     */
     public function register(Container $app)
     {
         $app['builder.default_options'] = [
-            'default'   => 'phpspreadsheet',
-            'cache_dir' => __DIR__ . '/../../../../../../../../cache/builder',
+            'default' => 'phpspreadsheet',
+            // defaults to project_root/cache/builder
+            'cache_dir' => __DIR__.'/../../../../../../../../cache/builder',
         ];
 
         // Merge default builder option.
-        $app['builder.default'] = isset($app['builder.default'])
-                                ? $app['builder.default']
-                                : $app['builder.default_options']['default'];
+        $app['builder.default'] = $app['builder.default'] ?? $app['builder.default_options']['default'];
 
         // Merge cache_dir option.
-        $app['builder.cache_dir'] = isset($app['builder.cache_dir'])
-                                  ? $app['builder.cache_dir']
-                                  : $app['builder.default_options']['cache_dir'];
+        $app['builder.cache_dir'] = $app['builder.cache_dir'] ?? $app['builder.default_options']['cache_dir'];
 
         $app['builders'] = function ($app) {
             $cacheDir = $app['builder.cache_dir'];
@@ -61,11 +63,11 @@ class BuilderServiceProvider implements ServiceProviderInterface
     }
 
     /**
-     * @param  string $builderName
+     * @param string $builderName
      *
      * @return string Fully qualified class name (FQCN) for the specified Builder class.
      */
-    public static function mapBuilderToClass($builderName)
+    public static function mapBuilderToClass($builderName): string
     {
         return (new self)->builderMappings[$builderName];
     }
