@@ -9,13 +9,16 @@ namespace Builder\Interfaces;
  */
 interface BuilderInterface
 {
+    // Alignment constants.
     public const ALIGNMENT_LEFT   = 'ALIGNMENT_LEFT';
     public const ALIGNMENT_CENTRE = 'ALIGNMENT_CENTRE';
     public const ALIGNMENT_RIGHT  = 'ALIGNMENT_RIGHT';
 
+    // Colour fill constants.
     public const FILL_SOLID = 'FILL_SOLID';
     public const FILL_NONE  = 'FILL_NONE';
 
+    // Colour constants.
     public const COLOUR_BLACK_RGB = '000000';
     public const COLOUR_WHITE_RGB = 'FFFFFF';
 

@@ -17,7 +17,7 @@ trait InitialisationStateTrait
      *
      * @return void
      */
-    private function setAsInitialised()
+    private function setAsInitialised(): void
     {
         $this->initialised = true;
     }
@@ -27,7 +27,7 @@ trait InitialisationStateTrait
      *
      * @return bool
      */
-    private function isInitialised()
+    private function isInitialised(): bool
     {
         return $this->initialised === true;
     }
@@ -37,7 +37,7 @@ trait InitialisationStateTrait
      *
      * @return bool
      */
-    private function isNotInitialised()
+    private function isNotInitialised(): bool
     {
         return $this->initialised === false;
     }

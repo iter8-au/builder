@@ -14,7 +14,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 /**
  * Class PhpSpreadsheet
  */
-class PhpSpreadsheet implements BuilderInterface
+class PhpSpreadsheetBuilder implements BuilderInterface
 {
     use BuilderFilesTrait;
 

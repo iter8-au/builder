@@ -1,18 +1,18 @@
 <?php
 
-namespace Tests\Builder;
+namespace Tests;
 
 use Box\Spout\Common\Helper\FileSystemHelper;
-use Builder\Builders\PhpSpreadsheet;
-use Builder\Interfaces\BuilderTestInterface;
+use Builder\Builders\PhpSpreadsheetBuilder;
 use Builder\Provider\Silex\BuilderServiceProvider;
 use PHPUnit\Framework\TestCase;
 use Silex\Application;
+use Tests\Interfaces\BuilderTestInterface;
 
 /**
  * Class PHPExcelTest
  */
-class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
+class PhpSpreadsheetTest extends TestCase implements BuilderTestInterface
 {
     /**
      * @test
@@ -28,7 +28,7 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
         $app->register(new BuilderServiceProvider());
 
         // Assert
-        $this->assertInstanceOf(PhpSpreadsheet::class, $app['builder']->getBuilder());
+        $this->assertInstanceOf(PhpSpreadsheetBuilder::class, $app['builder']->getBuilder());
     }
 
     /**

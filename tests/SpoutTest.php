@@ -1,17 +1,18 @@
 <?php
 
-namespace Tests\Builder;
+namespace Tests;
 
 use Box\Spout\Common\Helper\FileSystemHelper;
 use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
+use Builder\Builder;
 use Builder\Builders\SpoutBuilder;
 use Builder\Interfaces\BuilderInterface;
-use Builder\Interfaces\BuilderTestInterface;
 use Builder\Provider\Silex\BuilderServiceProvider;
 use PHPUnit\Framework\TestCase;
 use Silex\Application;
+use Tests\Interfaces\BuilderTestInterface;
 
 /**
  * Class SpoutTest
@@ -80,14 +81,17 @@ class SpoutTest extends TestCase implements BuilderTestInterface
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'spout',
+            'builder.default' => 'spout',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
         // $reader = ReaderFactory::create(Type::XLSX);
+        /** @var Builder $builder */
+        $builder = $app['builder'];
 
         // Act
-        $app['builder']->setSheetTitles('Spout Test');
-        $app['builder']->setData(
+        $builder->setFilename('test_name');
+        $builder->setSheetTitles('Spout Test');
+        $builder->setData(
             [
                 [
                     'Column 1' => 'column_1',
@@ -106,9 +110,9 @@ class SpoutTest extends TestCase implements BuilderTestInterface
                 ],
             ]
         );
-        $app['builder']->generateExcel();
+        $builder->generateExcel();
 
-        $generatedExcelFile = $app['builder']->getTempName();
+        $generatedExcelFile = $builder->getFilename();
 
         // Assert
         $this->assertFileExists($generatedExcelFile);
@@ -199,7 +203,7 @@ class SpoutTest extends TestCase implements BuilderTestInterface
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
         if (is_dir(__DIR__ . '/cache/spout') === true) {
-            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/spout');
+            //$fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/spout');
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Builder\Interfaces;
+namespace Tests\Interfaces;
 
 /**
  * Interface BuilderTestInterface

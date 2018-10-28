@@ -16,12 +16,13 @@ use UnexpectedValueException;
  */
 class Builder
 {
+    // Report type constants.
     public const REPORT_EXCEL = 0;
     public const REPORT_CSV   = 1;
 
-    public const ALIGNMENT_CENTER  = 0;
-    public const ALIGNMENT_LEFT    = 1;
-    public const ALIGNMENT_RIGHT   = 2;
+    public const ALIGNMENT_CENTER = 0;
+    public const ALIGNMENT_LEFT   = 1;
+    public const ALIGNMENT_RIGHT  = 2;
 
     /**
      * @var int
@@ -53,6 +54,9 @@ class Builder
      */
     private $title;
 
+    /**
+     * @var array
+     */
     private $sheetTitles;
 
     /**
@@ -90,8 +94,8 @@ class Builder
         BuilderInterface $builder,
         string $reportCacheDir
     ) {
-        $this->setBuilder($builder);
-        $this->setReportCacheDir($reportCacheDir);
+        $this->builder = $builder;
+        $this->reportCacheDir = $reportCacheDir;
 
         $this->prepareBuilder();
     }
@@ -123,7 +127,7 @@ class Builder
     /**
      * Generate the final report using whatever the set format is.
      *
-     * @param  bool $unlinkFlag
+     * @param bool $unlinkFlag
      *
      * @return void
      */
@@ -172,7 +176,7 @@ class Builder
         } else {
             // Single sheet - these will be an array and a string.
             $reportArray = $this->getData();
-            $sheetTitle  = $this->getSheetTitles();
+            $sheetTitle  = $this->getSheetTitles()[0];
 
             $this->builder->setActiveSheetIndex(0);
 
@@ -365,9 +369,9 @@ class Builder
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getFilename(): string
+    public function getFilename(): ?string
     {
         return $this->filename;
     }
@@ -420,35 +424,11 @@ class Builder
     }
 
     /**
-     * @param BuilderInterface $builder
-     *
-     * @return $this
-     */
-    public function setBuilder(BuilderInterface $builder): self
-    {
-        $this->builder = $builder;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getReportCacheDir(): string
     {
         return $this->reportCacheDir;
-    }
-
-    /**
-     * @param string $reportCacheDir
-     *
-     * @return $this
-     */
-    public function setReportCacheDir(string $reportCacheDir): self
-    {
-        $this->reportCacheDir = $reportCacheDir;
-
-        return $this;
     }
 
     /**
@@ -528,6 +508,7 @@ class Builder
      * TODO: Allow text styles and colours to be applied
      *
      * @param $columnIndex
+     *
      * @return array
      */
     private function getPhpSpreadsheetColumnStylesForColumn($columnIndex) {
@@ -624,21 +605,29 @@ class Builder
     }
 
     /**
+     * Sets an array of sheet titles.  If a string is provided we make it the first value of an array.
+     *
      * @param string|array $sheetTitles
      *
      * @return $this
      */
-    public function setSheetTitles($sheetTitles)
+    public function setSheetTitles($sheetTitles): self
     {
+        if (!is_array($sheetTitles)) {
+            $sheetTitles = [$sheetTitles];
+        }
+
         $this->sheetTitles = $sheetTitles;
 
         return $this;
     }
 
     /**
-     * @return string|array
+     * Array of sheet titles.
+     *
+     * @return array
      */
-    public function getSheetTitles()
+    public function getSheetTitles(): array
     {
         return $this->sheetTitles;
     }

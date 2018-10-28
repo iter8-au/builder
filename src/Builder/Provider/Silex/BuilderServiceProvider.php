@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Builder\Provider\Silex;
 
 use Builder\Builder;
-use Builder\Builders\PhpSpreadsheet;
+use Builder\Builders\PhpSpreadsheetBuilder;
 use Builder\Builders\SpoutBuilder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -15,9 +15,12 @@ use Pimple\ServiceProviderInterface;
  */
 class BuilderServiceProvider implements ServiceProviderInterface
 {
+    /**
+     * @var array
+     */
     private $builderMappings = [
         'spout' => SpoutBuilder::class,
-        'phpspreadsheet' => PhpSpreadsheet::class,
+        'phpspreadsheet' => PhpSpreadsheetBuilder::class,
     ];
 
     /**

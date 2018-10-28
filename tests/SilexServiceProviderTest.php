@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Builder;
+namespace Tests;
 
 use Box\Spout\Common\Helper\FileSystemHelper;
-use Builder\Builders\PhpSpreadsheet;
+use Builder\Builders\PhpSpreadsheetBuilder;
 use Builder\Builders\SpoutBuilder;
 use Builder\Provider\Silex\BuilderServiceProvider;
 use PHPUnit\Framework\TestCase;
@@ -46,7 +46,7 @@ class SilexServiceProviderTest extends TestCase
         ]);
 
         // Assert
-        $this->assertInstanceOf(PhpSpreadsheet::class, $app['builder']->getBuilder());
+        $this->assertInstanceOf(PhpSpreadsheetBuilder::class, $app['builder']->getBuilder());
         $this->assertInstanceOf(SpoutBuilder::class, $app['builders']['spout']->getBuilder());
     }
 
@@ -66,7 +66,7 @@ class SilexServiceProviderTest extends TestCase
 
         // Assert
         $this->assertInstanceOf(SpoutBuilder::class, $app['builder']->getBuilder());
-        $this->assertInstanceOf(PhpSpreadsheet::class, $app['builders']['phpspreadsheet']->getBuilder());
+        $this->assertInstanceOf(PhpSpreadsheetBuilder::class, $app['builders']['phpspreadsheet']->getBuilder());
     }
 
     /**
