@@ -181,12 +181,10 @@ class SpoutBuilder implements BuilderInterface
             $this->initialise();
         }
 
-        $keys = array_keys($columns);
-
         if ($style instanceof Style) {
-            $this->writer->addRowWithStyle($keys, $style);
+            $this->writer->addRowWithStyle($columns, $style);
         } else {
-            $this->writer->addRow($keys);
+            $this->writer->addRow($columns);
         }
 
         return;

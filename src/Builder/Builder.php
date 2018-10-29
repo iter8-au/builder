@@ -41,7 +41,12 @@ class Builder
     /**
      * @var array
      */
-    private $data;
+    private $headers = [];
+
+    /**
+     * @var array
+     */
+    private $data = [];
 
     /**
      * @var null|string
@@ -53,7 +58,10 @@ class Builder
      */
     private $title;
 
-    private $sheetTitles;
+    /**
+     * @var array
+     */
+    private $sheetTitles = [];
 
     /**
      * @var null|string
@@ -68,17 +76,17 @@ class Builder
     /**
      * @var array
      */
-    private $sheets;
+    private $sheets = [];
 
     /**
      * @var array
      */
-    private $columnWidths;
+    private $columnWidths = [];
 
     /**
      * @var array
      */
-    private $columnStyles;
+    private $columnStyles = [];
 
     /**
      * Builder constructor.
@@ -171,12 +179,14 @@ class Builder
             $this->createSheets();
         } else {
             // Single sheet - these will be an array and a string.
+            $headers     = $this->getHeaders();
             $reportArray = $this->getData();
             $sheetTitle  = $this->getSheetTitles();
 
             $this->builder->setActiveSheetIndex(0);
 
             $this->createSheet(
+                $headers,
                 $reportArray,
                 $sheetTitle
             );
@@ -210,7 +220,8 @@ class Builder
 
         foreach ($sheets as $sheet) {
             $this->createSheet(
-                $sheet,
+                $sheet['headers'],
+                $sheet['rows'],
                 $titles[$sheetCount]
             );
 
@@ -231,13 +242,15 @@ class Builder
     }
 
     /**
-     * @param array $data
+     * @param array  $headers
+     * @param array  $rows
      * @param string $title
      *
      * @return void
      */
     public function createSheet(
-        array $data,
+        array $headers,
+        array $rows,
         string $title
     ): void {
         // Check if we are setting any custom column widths.
@@ -261,14 +274,14 @@ class Builder
         ]);
 
         // Build column headers.
-        $this->builder->buildHeaderRow($data[0], $style);
+        $this->builder->buildHeaderRow($headers, $style);
 
         // Build all the rows now.
-        $this->builder->buildRows($data);
+        $this->builder->buildRows($rows);
 
         // If no column widths are specified, then simply auto-size all columns.
         if (!$this->hasColumnWidths()) {
-            $this->builder->autoSizeColumns($data[0]);
+            $this->builder->autoSizeColumns($rows[0]);
         }
 
         // Rename sheet.
@@ -324,19 +337,23 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return array
-     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    public function setHeaders(array $headers): self
+    {
+        $this->headers = $headers;
+
+        return $this;
+    }
+
     public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
     public function setData(array $data): self
     {
         $this->data = $data;

@@ -45,22 +45,29 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
 
         // Act
         $app['builder']->setSheetTitles('PHPExcel Test');
+        $app['builder']->setHeaders(
+            [
+                'Column 1',
+                'Column 2',
+                'Column 3',
+            ]
+        );
         $app['builder']->setData(
             [
                 [
-                    'Column 1' => 'column_1',
-                    'Column 2' => 'column_2',
-                    'Column 3' => 'column_3',
+                    'column_1',
+                    'column_2',
+                    'column_3',
                 ],
                 [
-                    'Column 1' => '1',
-                    'Column 2' => 'Two',
-                    'Column 3' => '333'
+                    '1',
+                    'Two',
+                    '333'
                 ],
                 [
-                    'Column 1' => 'One',
-                    'Column 2' => '2',
-                    'Column 3' => 'Three x 3'
+                    'One',
+                    '2',
+                    'Three x 3'
                 ],
             ]
         );
@@ -95,20 +102,32 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
         $app['builder']->setSheets(
             [
                 [
-                    [
-                        'Column 1' => 'Row 1',
-                        'Column 2' => 'Sheet 1',
+                    'headers' => [
+                        'Column 1',
+                        'Column 2',
+                    ],
+                    'rows' => [
+                        [
+                            'Row 1',
+                            'Sheet 1',
+                        ]
                     ],
                 ],
                 [
-                    [
-                        'Column 1' => 'Row 2',
-                        'Column 2' => 'Sheet 2',
+                    'headers' => [
+                        'Column 1',
+                        'Column 2',
                     ],
-                    [
-                        'Column 1' => 'Row 3',
-                        'Column 2' => 'Sheet 2',
-                    ],
+                    'rows' => [
+                        [
+                            'Row 2',
+                            'Sheet 2',
+                        ],
+                        [
+                            'Row 3',
+                            'Sheet 2',
+                        ],
+                    ]
                 ],
             ]
         );
