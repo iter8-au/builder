@@ -1,7 +1,7 @@
 {
   "name": "iter8/builder",
   "description": "A wrapper for the PHP Excel library to help you quickly build reports",
-  "keywords": ["phpexcel", "reports", "excel", "spout", "silex"],
+  "keywords": ["phpspreadsheet", "reports", "excel", "spout", "silex"],
   "license": "MIT",
   "homepage": "https://github.com/iter8-au/builder",
   "type": "library",

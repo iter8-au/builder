@@ -27,17 +27,23 @@ $app->register(
 $builder = $app['builder'];
 
 $reportArray = [
-    [
-        'Column 1' => 'Some Data',
-        'Column B' => 'Some Other Data',
+    'headers' => [
+        'Column 1',
+        'Column B',
     ],
-    [
-        'Column 1' => 'Some Data 2',
-        'Column B' => 'Some Other Data 2',
+    'rows' => [
+        [
+            'Some Data',
+            'Some Other Data',
+        ],
+        [
+            'Some Data 2',
+            'Some Other Data 2',
+        ],
     ],
 ];
 
-$builder->setSheets($reportArray);
+$builder->setSheets([$reportArray]);
 
 $builder->setCreator('App Name');
 $builder->setTitle('My Spreadsheet');

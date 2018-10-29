@@ -194,7 +194,7 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
         if (is_dir(__DIR__ . '/cache/phpspreadsheet') === true) {
-            //$fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpspreadsheet');
+            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpspreadsheet');
         }
     }
 }
