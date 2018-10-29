@@ -191,10 +191,10 @@ class PhpSpreadsheet implements BuilderInterface
         // The row needs to start at 1 at the beginning of execution.
         // The top left corner of the sheet is actually position (col = 0, row = 1).
         $row    = 1;
-        $column = 0;
+        $column = 1;
 
-        foreach (array_keys($columns) as $key) {
-            $this->builder->getActiveSheet()->setCellValueByColumnAndRow($column, $row, $key);
+        foreach ($columns as $columnName) {
+            $this->builder->getActiveSheet()->setCellValueByColumnAndRow($column, $row, $columnName);
 
             if (is_array($style)) {
                 $this->builder
@@ -217,7 +217,7 @@ class PhpSpreadsheet implements BuilderInterface
         $style = null,
         $rowIndex = 1
     ): void {
-        $columnIndex = 0;
+        $columnIndex = 1;
 
         foreach ($row as $column) {
             $this->builder->getActiveSheet()->setCellValueByColumnAndRow($columnIndex, $rowIndex, $column);
@@ -238,12 +238,12 @@ class PhpSpreadsheet implements BuilderInterface
         $style = null
     ): void {
         // The row needs to start at 1 at the beginning of execution.
-        // The top left corner of the sheet is actually position (col = 0, row = 1).
+        // The top left corner of the sheet is actually position (col = 1, row = 1).
         $rowIndex = 1;
 
         // If we have a header row then we need to bump the row index down one,
         // otherwise we'll overwrite the header (not ideal).
-        if ($this->builder->getActiveSheet()->cellExistsByColumnAndRow(0, $rowIndex)) {
+        if ($this->builder->getActiveSheet()->cellExistsByColumnAndRow(1, $rowIndex)) {
             $rowIndex = 2;
         }
 
@@ -289,7 +289,7 @@ class PhpSpreadsheet implements BuilderInterface
 
         $columnCount = count($columns);
 
-        for ($columnIndex = 0; $columnIndex <= $columnCount; $columnIndex++) {
+        for ($columnIndex = 1; $columnIndex <= $columnCount; $columnIndex++) {
             $this->builder->getActiveSheet()->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
         }
 

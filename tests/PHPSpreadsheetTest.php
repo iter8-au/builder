@@ -6,6 +6,7 @@ use Box\Spout\Common\Helper\FileSystemHelper;
 use Builder\Builders\PhpSpreadsheet;
 use Builder\Interfaces\BuilderTestInterface;
 use Builder\Provider\Silex\BuilderServiceProvider;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PHPUnit\Framework\TestCase;
 use Silex\Application;
 
@@ -42,6 +43,8 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
             'builder.default'   => 'phpspreadsheet',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
+        $reader = new Xlsx();
+        $reader->setReadDataOnly(true);
 
         // Act
         $app['builder']->setSheetTitles('PHPExcel Test');
@@ -74,10 +77,33 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
         $app['builder']->generateExcel();
 
         $generatedExcelFile = $app['builder']->getTempName();
+        $sheet = $reader->load($generatedExcelFile);
+        $sheetData = $sheet->getActiveSheet()->toArray(null, true, true, true);
+        $headers = array_shift($sheetData);
+        $rows = $sheetData;
+        $row1 = $rows[0];
+        $row3 = $rows[2];
 
         // Assert
         $this->assertFileExists($generatedExcelFile);
         $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
+
+        $this->assertCount(3, $headers, sprintf('Headers row should have 3 values, "%d" supplied.', count($headers)));
+        $this->assertEquals('Column 1', $headers['A']);
+        $this->assertEquals('Column 2', $headers['B']);
+        $this->assertEquals('Column 3', $headers['C']);
+
+        $this->assertCount(3, $rows, sprintf('Rows should have 3 rows, "%d" supplied.', count($rows)));
+
+        $this->assertCount(3, $row1, sprintf('Row 1 should have 3 values, "%d" supplied.', count($row1)));
+        $this->assertEquals('column_1', $row1['A']);
+        $this->assertEquals('column_2', $row1['B']);
+        $this->assertEquals('column_3', $row1['C']);
+
+        $this->assertCount(3, $row3, sprintf('Row 3 should have 3 values, "%d" supplied.', count($row3)));
+        $this->assertEquals('One', $row3['A']);
+        $this->assertEquals('2', $row3['B']);
+        $this->assertEquals('Three x 3', $row3['C']);
     }
 
     /**
@@ -168,7 +194,7 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
         if (is_dir(__DIR__ . '/cache/phpspreadsheet') === true) {
-            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpspreadsheet');
+            //$fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpspreadsheet');
         }
     }
 }

@@ -102,10 +102,6 @@ class SpoutTest extends TestCase implements BuilderTestInterface
         $app['builder']->generateExcel();
 
         $generatedExcelFile = $app['builder']->getTempName();
-
-        // Assert
-        $this->assertFileExists($generatedExcelFile);
-        $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
         $reader->open($generatedExcelFile);
 
         // Need to use `iterator_to_array` as it's the only way to coerce Spout to read the spreadsheet into memory
@@ -113,9 +109,14 @@ class SpoutTest extends TestCase implements BuilderTestInterface
         $sheets = iterator_to_array($reader->getSheetIterator());
         // Sheets array is *NOT* zero-based when fetched from the iterator.
         $sheetData = iterator_to_array($sheets[1]->getRowIterator());
-
         $headers = array_shift($sheetData);
         $rows = $sheetData;
+        $row1 = $rows[0];
+        $row3 = $rows[2];
+
+        // Assert
+        $this->assertFileExists($generatedExcelFile);
+        $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
 
         $this->assertCount(3, $headers, sprintf('Headers row should have 3 values, "%d" supplied.', count($headers)));
         $this->assertEquals('Column 1', $headers[0]);
@@ -123,9 +124,6 @@ class SpoutTest extends TestCase implements BuilderTestInterface
         $this->assertEquals('Column 3', $headers[2]);
 
         $this->assertCount(3, $rows, sprintf('Rows should have 3 rows, "%d" supplied.', count($rows)));
-
-        $row1 = $rows[0];
-        $row3 = $rows[2];
 
         $this->assertCount(3, $row1, sprintf('Row 1 should have 3 values, "%d" supplied.', count($row1)));
         $this->assertEquals('column_1', $row1[0]);
