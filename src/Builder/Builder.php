@@ -105,12 +105,16 @@ class Builder
     }
 
     /**
-     * Prepares the builders.
+     * Prepares the builders and creates the cache directory if it doesn't exist.
      *
      * @return void
      */
     private function prepareBuilder(): void
     {
+        if (!file_exists($this->getReportCacheDir())) {
+            @mkdir($this->getReportCacheDir(), 0777, true);
+        }
+
         $this->builder
              ->setCacheDir($this->getReportCacheDir())
              ->initialise();
