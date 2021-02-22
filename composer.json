@@ -9,16 +9,16 @@
     {
       "name": "Dean Smith",
       "email": "dean@iter8.com.au",
-      "homepage": "http://iter8.com.au"
+      "homepage": "https://iter8.com.au"
     },
     {
       "name": "Dan Barrett",
       "email": "dan@iter8.com.au",
-      "homepage": "http://iter8.com.au"
+      "homepage": "https://iter8.com.au"
     }
   ],
   "require": {
-    "php": "^7.1",
+    "php": ">=7.1",
     "phpoffice/phpspreadsheet": "~1.2",
     "box/spout": "^2.7",
     "webmozart/assert": "^1.3"
