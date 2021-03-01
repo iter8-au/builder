@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Builder\Builders;
+namespace Iter8\Builder\Builders;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
@@ -12,9 +12,9 @@ use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\WriterFactory;
-use Builder\Interfaces\BuilderInterface;
-use Builder\Traits\BuilderFilesTrait;
-use Builder\Traits\InitialisationStateTrait;
+use Iter8\Builder\Interfaces\BuilderInterface;
+use Iter8\Builder\Traits\BuilderFilesTrait;
+use Iter8\Builder\Traits\InitialisationStateTrait;
 
 /**
  * Class SpoutBuilder

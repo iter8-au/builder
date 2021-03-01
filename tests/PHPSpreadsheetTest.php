@@ -1,19 +1,13 @@
 <?php
 
-namespace Tests\Builder;
+namespace Tests;
 
 use Box\Spout\Common\Helper\FileSystemHelper;
 use Builder\Builders\PhpSpreadsheet;
-use Builder\Interfaces\BuilderTestInterface;
-use Builder\Provider\Silex\BuilderServiceProvider;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PHPUnit\Framework\TestCase;
-use Silex\Application;
 
-/**
- * Class PHPExcelTest
- */
-class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
+class PHPSpreadsheetTest extends TestCase
 {
     /**
      * @test
@@ -169,7 +163,7 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
     /**
      * @return string
      */
-    private function getCacheDir()
+    private function getCacheDir(): string
     {
         return __DIR__ . '/cache/phpspreadsheet';
     }
@@ -177,7 +171,7 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
     /**
      * Create the cache folder required for testing.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
@@ -189,7 +183,7 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
     /**
      * Remove the cache folder required for testing.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 

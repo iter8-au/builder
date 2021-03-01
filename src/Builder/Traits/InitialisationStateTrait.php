@@ -1,10 +1,7 @@
 <?php
 
-namespace Builder\Traits;
+namespace Iter8\Builder\Traits;
 
-/**
- * Trait InitialisationStateTrait
- */
 trait InitialisationStateTrait
 {
     /**

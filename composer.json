@@ -1,45 +1,51 @@
 {
-  "name": "iter8/builder",
-  "description": "A wrapper for the PHP Excel library to help you quickly build reports",
-  "keywords": ["phpspreadsheet", "reports", "excel", "spout", "silex"],
-  "license": "MIT",
-  "homepage": "https://github.com/iter8-au/builder",
-  "type": "library",
-  "authors": [
-    {
-      "name": "Dean Smith",
-      "email": "dean@iter8.com.au",
-      "homepage": "https://iter8.com.au"
+    "name": "iter8/builder",
+    "type": "library",
+    "description": "A wrapper for PHP Excel libraries to help you quickly build reports",
+    "keywords": [
+        "phpoffice",
+        "phpspreadsheet",
+        "excel",
+        "spout"
+    ],
+    "homepage": "https://github.com/iter8-au/builder",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dean Smith",
+            "email": "dean@iter8.com.au",
+            "homepage": "https://iter8.com.au"
+        },
+        {
+            "name": "Dan Barrett",
+            "email": "dan@iter8.com.au",
+            "homepage": "https://iter8.com.au"
+        }
+    ],
+    "require": {
+        "php": "^7.2 || ^8.0",
+        "box/spout": "^3.1",
+        "phpoffice/phpspreadsheet": "^1.16",
+        "webmozart/assert": "^1.9"
     },
-    {
-      "name": "Dan Barrett",
-      "email": "dan@iter8.com.au",
-      "homepage": "https://iter8.com.au"
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.11",
+        "phpunit/phpunit": "^9.5"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Iter8\\Builder\\": "src/Builder"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Iter8\\Builder\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "tests": "phpunit"
     }
-  ],
-  "require": {
-    "php": ">=7.1",
-    "phpoffice/phpspreadsheet": "~1.2",
-    "box/spout": "^2.7",
-    "webmozart/assert": "^1.3"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^7.0",
-    "silex/silex": "^2.0",
-    "symfony/var-dumper": "^4.1"
-  },
-  "autoload": {
-    "psr-4": {
-      "Builder\\": "src/Builder"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Test\\": "tests"
-    }
-  },
-  "scripts": {
-    "tests": "phpunit",
-    "coverage": "phpunit --coverage-html=./builder_coverage"
-  }
 }

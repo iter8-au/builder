@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Builder;
+namespace Iter8\Builder;
 
-use Builder\Interfaces\BuilderInterface;
+use Iter8\Builder\Interfaces\BuilderInterface;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use UnexpectedValueException;
 
 /**
  * Helper for easily generating cached Excel or CSV files, ready to download, from an array of data.
@@ -160,7 +159,7 @@ class Builder
             exit;
         }
 
-        throw new UnexpectedValueException('Attempted to generate a report in an unsupported format.');
+        throw new \UnexpectedValueException('Attempted to generate a report in an unsupported format.');
     }
 
     /**
@@ -214,7 +213,7 @@ class Builder
         $sheetCount  = 0;
 
         if (empty($sheets) || !is_array($sheets)) {
-            throw new UnexpectedValueException(
+            throw new \UnexpectedValueException(
                 'Expected an array of sheets data but got an empty value or non-array.'
             );
         }

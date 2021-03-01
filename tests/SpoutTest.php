@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Builder;
+namespace Tests;
 
 use Box\Spout\Common\Helper\FileSystemHelper;
 use Box\Spout\Common\Type;
@@ -10,15 +10,9 @@ use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Builder\Builders\SpoutBuilder;
 use Builder\Interfaces\BuilderInterface;
-use Builder\Interfaces\BuilderTestInterface;
-use Builder\Provider\Silex\BuilderServiceProvider;
 use PHPUnit\Framework\TestCase;
-use Silex\Application;
 
-/**
- * Class SpoutTest
- */
-class SpoutTest extends TestCase implements BuilderTestInterface
+class SpoutTest extends TestCase
 {
     /**
      * @test
@@ -207,7 +201,7 @@ class SpoutTest extends TestCase implements BuilderTestInterface
     /**
      * Create the cache folder required for testing.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 
@@ -219,7 +213,7 @@ class SpoutTest extends TestCase implements BuilderTestInterface
     /**
      * Remove the cache folder required for testing.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
 

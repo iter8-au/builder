@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Builder\Interfaces;
+namespace Iter8\Builder\Interfaces;
 
-/**
- * Interface BuilderInterface
- */
 interface BuilderInterface
 {
     public const ALIGNMENT_LEFT   = 'ALIGNMENT_LEFT';

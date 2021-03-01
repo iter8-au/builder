@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Builder\Traits;
+namespace Iter8\Builder\Traits;
 
-/**
- * Trait BuilderFilesTrait
- */
 trait BuilderFilesTrait
 {
     /**
