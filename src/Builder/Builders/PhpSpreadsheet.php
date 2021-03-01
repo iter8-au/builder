@@ -12,7 +12,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 /**
- * Class PhpSpreadsheet
+ * Class PhpSpreadsheet.
  */
 class PhpSpreadsheet implements BuilderInterface
 {
@@ -122,34 +122,32 @@ class PhpSpreadsheet implements BuilderInterface
     }
 
     /**
-     * http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object
-     *
-     * @param array $style
+     * http://stackoverflow.com/questions/12918586/phpexcel-specific-cell-formatting-from-style-object.
      *
      * @return array
      */
     public function buildRowStyle(array $style)
     {
-        $finalStyleArray   = [];
+        $finalStyleArray = [];
         $defaultStyleArray = [
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_LEFT,
             ],
-            'font'      => [
+            'font' => [
                 'color' => [
                     'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
                 ],
                 'bold' => true,
             ],
-            'fill'      => [
-                'type'  => Fill::FILL_SOLID,
+            'fill' => [
+                'type' => Fill::FILL_SOLID,
                 'color' => [
                     'rgb' => '000000',
                 ],
             ],
         ];
 
-        if (!array_key_exists('alignment', $style)) {
+        if (!\array_key_exists('alignment', $style)) {
             $finalStyleArray['alignment']['horizontal'] = $defaultStyleArray['alignment']['horizontal'];
         } else {
             switch ($style['alignment']) {
@@ -172,7 +170,7 @@ class PhpSpreadsheet implements BuilderInterface
             }
         }
 
-        if (!array_key_exists('font', $style)) {
+        if (!\array_key_exists('font', $style)) {
             $finalStyleArray['font'] = $defaultStyleArray['font'];
         } else {
             $finalStyleArray['font'] = $style['font'];
@@ -190,20 +188,20 @@ class PhpSpreadsheet implements BuilderInterface
     ): void {
         // The row needs to start at 1 at the beginning of execution.
         // The top left corner of the sheet is actually position (col = 0, row = 1).
-        $row    = 1;
+        $row = 1;
         $column = 1;
 
         foreach ($columns as $columnName) {
             $this->builder->getActiveSheet()->setCellValueByColumnAndRow($column, $row, $columnName);
 
-            if (is_array($style)) {
+            if (\is_array($style)) {
                 $this->builder
                      ->getActiveSheet()
                      ->getStyleByColumnAndRow($column, $row)
                      ->applyFromArray($style);
             }
 
-            $column++;
+            ++$column;
         }
 
         return;
@@ -222,14 +220,14 @@ class PhpSpreadsheet implements BuilderInterface
         foreach ($row as $column) {
             $this->builder->getActiveSheet()->setCellValueByColumnAndRow($columnIndex, $rowIndex, $column);
 
-            $columnIndex++;
+            ++$columnIndex;
         }
 
         return;
     }
 
     /**
-     * http://stackoverflow.com/questions/2584954/phpexcel-how-to-set-cell-value-dynamically
+     * http://stackoverflow.com/questions/2584954/phpexcel-how-to-set-cell-value-dynamically.
      *
      * {@inheritdoc}
      */
@@ -250,7 +248,7 @@ class PhpSpreadsheet implements BuilderInterface
         foreach ($rows as $row) {
             $this->buildRow($row, $style, $rowIndex);
 
-            $rowIndex++;
+            ++$rowIndex;
         }
 
         return;
@@ -264,7 +262,7 @@ class PhpSpreadsheet implements BuilderInterface
         array $widths,
         $sheet = null
     ): void {
-        if ($sheet !== null) {
+        if (null !== $sheet) {
             $this->builder->setActiveSheetIndex($sheet);
         }
 
@@ -283,13 +281,13 @@ class PhpSpreadsheet implements BuilderInterface
         array $columns,
         $sheet = null
     ): void {
-        if ($sheet !== null) {
+        if (null !== $sheet) {
             $this->builder->setActiveSheetIndex($sheet);
         }
 
-        $columnCount = count($columns);
+        $columnCount = \count($columns);
 
-        for ($columnIndex = 1; $columnIndex <= $columnCount; $columnIndex++) {
+        for ($columnIndex = 1; $columnIndex <= $columnCount; ++$columnIndex) {
             $this->builder->getActiveSheet()->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
         }
 

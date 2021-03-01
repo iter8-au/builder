@@ -12,7 +12,7 @@ trait BuilderFilesTrait
     private $cacheDir;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $cacheName;
 
@@ -36,7 +36,7 @@ trait BuilderFilesTrait
             $this->cacheName = sprintf(
                 '%s/%s.xlsx',
                 $this->cacheDir,
-                md5(microtime() . random_int(0, mt_getrandmax()))
+                md5(microtime().random_int(0, mt_getrandmax()))
             );
         }
 

@@ -9,15 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 class PHPSpreadsheetTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function builder_is_correct_builder()
+    public function test_builder_is_correct_builder()
     {
         // Arrange
         $app = new Application();
-        $app['builder.default']   = 'phpspreadsheet';
-        $app['builder.cache_dir'] = __DIR__ . '/cache/phpspreadsheet';
+        $app['builder.default'] = 'phpspreadsheet';
+        $app['builder.cache_dir'] = __DIR__.'/cache/phpspreadsheet';
 
         // Act
         $app->register(new BuilderServiceProvider());
@@ -26,15 +23,12 @@ class PHPSpreadsheetTest extends TestCase
         $this->assertInstanceOf(PhpSpreadsheet::class, $app['builder']->getBuilder());
     }
 
-    /**
-     * @test
-     */
-    public function can_create_single_sheet_spreadsheet()
+    public function test_can_create_single_sheet_spreadsheet()
     {
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpspreadsheet',
+            'builder.default' => 'phpspreadsheet',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
         $reader = new Xlsx();
@@ -59,12 +53,12 @@ class PHPSpreadsheetTest extends TestCase
                 [
                     '1',
                     'Two',
-                    '333'
+                    '333',
                 ],
                 [
                     'One',
                     '2',
-                    'Three x 3'
+                    'Three x 3',
                 ],
             ]
         );
@@ -82,33 +76,30 @@ class PHPSpreadsheetTest extends TestCase
         $this->assertFileExists($generatedExcelFile);
         $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
 
-        $this->assertCount(3, $headers, sprintf('Headers row should have 3 values, "%d" supplied.', count($headers)));
+        $this->assertCount(3, $headers, sprintf('Headers row should have 3 values, "%d" supplied.', \count($headers)));
         $this->assertEquals('Column 1', $headers['A']);
         $this->assertEquals('Column 2', $headers['B']);
         $this->assertEquals('Column 3', $headers['C']);
 
-        $this->assertCount(3, $rows, sprintf('Rows should have 3 rows, "%d" supplied.', count($rows)));
+        $this->assertCount(3, $rows, sprintf('Rows should have 3 rows, "%d" supplied.', \count($rows)));
 
-        $this->assertCount(3, $row1, sprintf('Row 1 should have 3 values, "%d" supplied.', count($row1)));
+        $this->assertCount(3, $row1, sprintf('Row 1 should have 3 values, "%d" supplied.', \count($row1)));
         $this->assertEquals('column_1', $row1['A']);
         $this->assertEquals('column_2', $row1['B']);
         $this->assertEquals('column_3', $row1['C']);
 
-        $this->assertCount(3, $row3, sprintf('Row 3 should have 3 values, "%d" supplied.', count($row3)));
+        $this->assertCount(3, $row3, sprintf('Row 3 should have 3 values, "%d" supplied.', \count($row3)));
         $this->assertEquals('One', $row3['A']);
         $this->assertEquals('2', $row3['B']);
         $this->assertEquals('Three x 3', $row3['C']);
     }
 
-    /**
-     * @test
-     */
-    public function can_create_multi_sheet_spreadsheet()
+    public function test_can_create_multi_sheet_spreadsheet()
     {
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpspreadsheet',
+            'builder.default' => 'phpspreadsheet',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
@@ -130,7 +121,7 @@ class PHPSpreadsheetTest extends TestCase
                         [
                             'Row 1',
                             'Sheet 1',
-                        ]
+                        ],
                     ],
                 ],
                 [
@@ -147,7 +138,7 @@ class PHPSpreadsheetTest extends TestCase
                             'Row 3',
                             'Sheet 2',
                         ],
-                    ]
+                    ],
                 ],
             ]
         );
@@ -160,12 +151,9 @@ class PHPSpreadsheetTest extends TestCase
         $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
     }
 
-    /**
-     * @return string
-     */
     private function getCacheDir(): string
     {
-        return __DIR__ . '/cache/phpspreadsheet';
+        return __DIR__.'/cache/phpspreadsheet';
     }
 
     /**
@@ -173,10 +161,10 @@ class PHPSpreadsheetTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
+        $fileSystemHelper = new FileSystemHelper(__DIR__.'/cache');
 
-        if (is_dir(__DIR__ . '/cache/phpspreadsheet') === false) {
-            $fileSystemHelper->createFolder(__DIR__ . '/cache', 'phpspreadsheet');
+        if (false === is_dir(__DIR__.'/cache/phpspreadsheet')) {
+            $fileSystemHelper->createFolder(__DIR__.'/cache', 'phpspreadsheet');
         }
     }
 
@@ -185,10 +173,10 @@ class PHPSpreadsheetTest extends TestCase
      */
     public static function tearDownAfterClass(): void
     {
-        $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
+        $fileSystemHelper = new FileSystemHelper(__DIR__.'/cache');
 
-        if (is_dir(__DIR__ . '/cache/phpspreadsheet') === true) {
-            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpspreadsheet');
+        if (true === is_dir(__DIR__.'/cache/phpspreadsheet')) {
+            $fileSystemHelper->deleteFolderRecursively(__DIR__.'/cache/phpspreadsheet');
         }
     }
 }

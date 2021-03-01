@@ -14,15 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class SpoutTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function builder_is_correct_builder()
+    public function test_builder_is_correct_builder()
     {
         // Arrange
         $app = new Application();
-        $app['builder.default']   = 'spout';
-        $app['builder.cache_dir'] = __DIR__ . '/cache/spout';
+        $app['builder.default'] = 'spout';
+        $app['builder.cache_dir'] = __DIR__.'/cache/spout';
 
         // Act
         $app->register(new BuilderServiceProvider());
@@ -31,15 +28,12 @@ class SpoutTest extends TestCase
         $this->assertInstanceOf(SpoutBuilder::class, $app['builder']->getBuilder());
     }
 
-    /**
-     * @test
-     */
-    public function row_style_is_parsed_correctly()
+    public function test_row_style_is_parsed_correctly()
     {
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'spout',
+            'builder.default' => 'spout',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
@@ -66,15 +60,12 @@ class SpoutTest extends TestCase
         $this->assertSame($style->serialize(), $styleBuilderStyle->serialize());
     }
 
-    /**
-     * @test
-     */
-    public function can_create_single_sheet_spreadsheet()
+    public function test_can_create_single_sheet_spreadsheet()
     {
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'spout',
+            'builder.default' => 'spout',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
         $reader = ReaderFactory::create(Type::XLSX);
@@ -112,33 +103,30 @@ class SpoutTest extends TestCase
         $this->assertFileExists($generatedExcelFile);
         $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
 
-        $this->assertCount(3, $headers, sprintf('Headers row should have 3 values, "%d" supplied.', count($headers)));
+        $this->assertCount(3, $headers, sprintf('Headers row should have 3 values, "%d" supplied.', \count($headers)));
         $this->assertEquals('Column 1', $headers[0]);
         $this->assertEquals('Column 2', $headers[1]);
         $this->assertEquals('Column 3', $headers[2]);
 
-        $this->assertCount(3, $rows, sprintf('Rows should have 3 rows, "%d" supplied.', count($rows)));
+        $this->assertCount(3, $rows, sprintf('Rows should have 3 rows, "%d" supplied.', \count($rows)));
 
-        $this->assertCount(3, $row1, sprintf('Row 1 should have 3 values, "%d" supplied.', count($row1)));
+        $this->assertCount(3, $row1, sprintf('Row 1 should have 3 values, "%d" supplied.', \count($row1)));
         $this->assertEquals('column_1', $row1[0]);
         $this->assertEquals('column_2', $row1[1]);
         $this->assertEquals('column_3', $row1[2]);
 
-        $this->assertCount(3, $row3, sprintf('Row 3 should have 3 values, "%d" supplied.', count($row3)));
+        $this->assertCount(3, $row3, sprintf('Row 3 should have 3 values, "%d" supplied.', \count($row3)));
         $this->assertEquals('One', $row3[0]);
         $this->assertEquals('2', $row3[1]);
         $this->assertEquals('Three x 3', $row3[2]);
     }
 
-    /**
-     * @test
-     */
-    public function can_create_multi_sheet_spreadsheet()
+    public function test_can_create_multi_sheet_spreadsheet()
     {
         // Arrange
         $app = new Application();
         $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'spout',
+            'builder.default' => 'spout',
             'builder.cache_dir' => $this->getCacheDir(),
         ]);
 
@@ -160,7 +148,7 @@ class SpoutTest extends TestCase
                         [
                             'Row 1',
                             'Sheet 1',
-                        ]
+                        ],
                     ],
                 ],
                 [
@@ -177,7 +165,7 @@ class SpoutTest extends TestCase
                             'Row 3',
                             'Sheet 2',
                         ],
-                    ]
+                    ],
                 ],
             ]
         );
@@ -195,7 +183,7 @@ class SpoutTest extends TestCase
      */
     private function getCacheDir()
     {
-        return __DIR__ . '/cache/spout';
+        return __DIR__.'/cache/spout';
     }
 
     /**
@@ -203,10 +191,10 @@ class SpoutTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
+        $fileSystemHelper = new FileSystemHelper(__DIR__.'/cache');
 
-        if (is_dir(__DIR__ . '/cache/spout') === false) {
-            $fileSystemHelper->createFolder(__DIR__ . '/cache', 'spout');
+        if (false === is_dir(__DIR__.'/cache/spout')) {
+            $fileSystemHelper->createFolder(__DIR__.'/cache', 'spout');
         }
     }
 
@@ -215,10 +203,10 @@ class SpoutTest extends TestCase
      */
     public static function tearDownAfterClass(): void
     {
-        $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
+        $fileSystemHelper = new FileSystemHelper(__DIR__.'/cache');
 
-        if (is_dir(__DIR__ . '/cache/spout') === true) {
-            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/spout');
+        if (true === is_dir(__DIR__.'/cache/spout')) {
+            $fileSystemHelper->deleteFolderRecursively(__DIR__.'/cache/spout');
         }
     }
 }

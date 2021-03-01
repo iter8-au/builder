@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace Iter8\Builder\Builders;
 
-use Box\Spout\Writer\WriterMultiSheetsAbstract;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Exception\SheetNotFoundException;
+use Box\Spout\Writer\WriterMultiSheetsAbstract;
 use Iter8\Builder\Interfaces\BuilderInterface;
 use Iter8\Builder\Traits\BuilderFilesTrait;
 use Iter8\Builder\Traits\InitialisationStateTrait;
 
 /**
- * Class SpoutBuilder
+ * Class SpoutBuilder.
  */
 class SpoutBuilder implements BuilderInterface
 {
@@ -103,12 +103,7 @@ class SpoutBuilder implements BuilderInterface
         $sheets = $this->writer->getSheets();
 
         if (!isset($sheets[$sheetIndex])) {
-            throw new SheetNotFoundException(
-                sprintf(
-                    'The given sheet "%d" does not exist in the workbook.',
-                    $sheetIndex
-                )
-            );
+            throw new SheetNotFoundException(sprintf('The given sheet "%d" does not exist in the workbook.', $sheetIndex));
         }
 
         $this->writer->setCurrentSheet($sheets[$sheetIndex]);
@@ -139,8 +134,6 @@ class SpoutBuilder implements BuilderInterface
     }
 
     /**
-     * @param array $style
-     *
      * @return Style
      */
     public function buildRowStyle(array $style)
@@ -149,14 +142,14 @@ class SpoutBuilder implements BuilderInterface
 
         // Spout doesn't offer support for changing column alignment.
 
-        if (array_key_exists('font', $style)) {
-            if (array_key_exists('color', $style['font'])) {
+        if (\array_key_exists('font', $style)) {
+            if (\array_key_exists('color', $style['font'])) {
                 $finalStyle->setFontColor(
                     Color::toARGB($style['font']['color']['rgb'])
                 );
             }
 
-            if (array_key_exists('bold', $style['font']) && ($style['font']['bold'] === true)) {
+            if (\array_key_exists('bold', $style['font']) && (true === $style['font']['bold'])) {
                 $finalStyle->setFontBold();
             }
         }

@@ -19,4 +19,4 @@ return PhpCsFixer\Config::create()
         PhpCsFixer\Finder::create()
             ->in(__DIR__)
             ->append([__FILE__])
-    )
+    );

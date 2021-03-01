@@ -26,7 +26,7 @@ trait InitialisationStateTrait
      */
     private function isInitialised()
     {
-        return $this->initialised === true;
+        return true === $this->initialised;
     }
 
     /**
@@ -36,6 +36,6 @@ trait InitialisationStateTrait
      */
     private function isNotInitialised()
     {
-        return $this->initialised === false;
+        return false === $this->initialised;
     }
 }

@@ -16,11 +16,11 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 class Builder
 {
     public const REPORT_EXCEL = 0;
-    public const REPORT_CSV   = 1;
+    public const REPORT_CSV = 1;
 
-    public const ALIGNMENT_CENTER  = 0;
-    public const ALIGNMENT_LEFT    = 1;
-    public const ALIGNMENT_RIGHT   = 2;
+    public const ALIGNMENT_CENTER = 0;
+    public const ALIGNMENT_LEFT = 1;
+    public const ALIGNMENT_RIGHT = 2;
 
     /**
      * @var int
@@ -48,12 +48,12 @@ class Builder
     private $data = [];
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $creator;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $title;
 
@@ -63,12 +63,12 @@ class Builder
     private $sheetTitles = [];
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $description;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     private $filename;
 
@@ -89,9 +89,6 @@ class Builder
 
     /**
      * Builder constructor.
-     *
-     * @param BuilderInterface $builder
-     * @param string           $reportCacheDir
      */
     public function __construct(
         BuilderInterface $builder,
@@ -105,8 +102,6 @@ class Builder
 
     /**
      * Prepares the builders and creates the cache directory if it doesn't exist.
-     *
-     * @return void
      */
     private function prepareBuilder(): void
     {
@@ -123,8 +118,6 @@ class Builder
 
     /**
      * Get the temp filename for the Excel builder.
-     *
-     * @return string
      */
     public function getTempName(): string
     {
@@ -134,13 +127,14 @@ class Builder
     /**
      * Generate the final report using whatever the set format is.
      *
-     * @param  bool $unlinkFlag
+     * @param bool $unlinkFlag
      *
      * @return void
      */
-    public function generate($unlinkFlag = true) {
+    public function generate($unlinkFlag = true)
+    {
         // Determine which format we are using and call the appropriate method.
-        if ($this->getReportType() === self::REPORT_EXCEL) {
+        if (self::REPORT_EXCEL === $this->getReportType()) {
             $this->generateExcel();
 
             // Output headers
@@ -150,7 +144,7 @@ class Builder
             header('Content-Type: application/force-download');
             header('Content-Type: application/octet-stream');
             header('Content-Type: application/download');
-            header('Content-Disposition: attachment;filename=' . $this->getFilename() . '.xlsx');
+            header('Content-Disposition: attachment;filename='.$this->getFilename().'.xlsx');
             header('Content-Transfer-Encoding: binary ');
 
             readfile($this->builder->getTempName());
@@ -164,8 +158,6 @@ class Builder
 
     /**
      * Generates an Excel document.
-     *
-     * @return void
      */
     public function generateExcel(): void
     {
@@ -182,9 +174,9 @@ class Builder
             $this->createSheets();
         } else {
             // Single sheet - these will be an array and a string.
-            $headers     = $this->getHeaders();
+            $headers = $this->getHeaders();
             $reportArray = $this->getData();
-            $sheetTitle  = $this->getSheetTitles();
+            $sheetTitle = $this->getSheetTitles();
 
             $this->builder->setActiveSheetIndex(0);
 
@@ -201,21 +193,16 @@ class Builder
         return;
     }
 
-    /**
-     * @return void
-     */
     public function createSheets(): void
     {
         $sheets = $this->getSheets();
         $titles = $this->getSheetTitles();
 
-        $totalSheets = count($sheets);
-        $sheetCount  = 0;
+        $totalSheets = \count($sheets);
+        $sheetCount = 0;
 
-        if (empty($sheets) || !is_array($sheets)) {
-            throw new \UnexpectedValueException(
-                'Expected an array of sheets data but got an empty value or non-array.'
-            );
+        if (empty($sheets) || !\is_array($sheets)) {
+            throw new \UnexpectedValueException('Expected an array of sheets data but got an empty value or non-array.');
         }
 
         // We have to set the initial active sheet.
@@ -233,7 +220,7 @@ class Builder
                 $this->builder->createNewSheet();
 
                 // Increment the active sheet count and move to that sheet.
-                $sheetCount++;
+                ++$sheetCount;
                 $this->builder->setActiveSheetIndex($sheetCount);
             }
         }
@@ -244,13 +231,6 @@ class Builder
         return;
     }
 
-    /**
-     * @param array  $headers
-     * @param array  $rows
-     * @param string $title
-     *
-     * @return void
-     */
     public function createSheet(
         array $headers,
         array $rows,
@@ -268,11 +248,11 @@ class Builder
         // Style settings for agent headers
         $style = $this->builder->buildRowStyle([
             'alignment' => BuilderInterface::ALIGNMENT_CENTRE,
-            'font'      => [
+            'font' => [
                 'color' => [
                     'rgb' => BuilderInterface::COLOUR_BLACK_RGB,
                 ],
-                'bold'  => true,
+                'bold' => true,
             ],
         ]);
 
@@ -291,26 +271,19 @@ class Builder
         $this->builder->setSheetTitle($title);
     }
 
-
     /**
-     * TODO: Implement to output in CSV format but with an .xls extension to open in excel
+     * TODO: Implement to output in CSV format but with an .xls extension to open in excel.
      */
     public function generateCSV()
     {
-
     }
 
-    /**
-     * @return int
-     */
     public function getReportType(): int
     {
         return $this->reportType;
     }
 
     /**
-     * @param int $reportType
-     *
      * @return $this
      */
     public function setReportType(int $reportType): self
@@ -320,9 +293,6 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getCreator(): ?string
     {
         return $this->creator;
@@ -364,17 +334,12 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
     /**
-     * @param string $description
-     *
      * @return $this
      */
     public function setDescription(string $description): self
@@ -384,17 +349,12 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFilename(): string
     {
         return $this->filename;
     }
 
     /**
-     * @param string $filename
-     *
      * @return $this
      */
     public function setFilename(string $filename): self
@@ -404,9 +364,6 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
@@ -416,13 +373,11 @@ class Builder
      * Note: if the title is longer than 31 characters it'll be trimmed.
      * This is due to a limit in Excel.
      *
-     * @param string $title
-     *
      * @return $this
      */
     public function setTitle(string $title): self
     {
-        if (strlen($title) > 31) {
+        if (\strlen($title) > 31) {
             $title = mb_substr($title, 0, 31);
         }
 
@@ -431,17 +386,12 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return BuilderInterface
-     */
     public function getBuilder(): BuilderInterface
     {
         return $this->builder;
     }
 
     /**
-     * @param BuilderInterface $builder
-     *
      * @return $this
      */
     public function setBuilder(BuilderInterface $builder): self
@@ -451,17 +401,12 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getReportCacheDir(): string
     {
         return $this->reportCacheDir;
     }
 
     /**
-     * @param string $reportCacheDir
-     *
      * @return $this
      */
     public function setReportCacheDir(string $reportCacheDir): self
@@ -471,9 +416,6 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function hasColumnWidths(): bool
     {
         $columnWidths = $this->getColumnWidths();
@@ -490,8 +432,6 @@ class Builder
     }
 
     /**
-     * @param array $columnWidths
-     *
      * @return $this
      */
     public function setColumnWidths(array $columnWidths): self
@@ -501,9 +441,6 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function hasColumnStyles(): bool
     {
         $columnStyles = $this->getColumnStyles();
@@ -513,8 +450,6 @@ class Builder
 
     /**
      * @param int $columnIndex
-     *
-     * @return bool
      */
     public function hasColumnStylesForColumn($columnIndex): bool
     {
@@ -545,12 +480,14 @@ class Builder
 
     /**
      * TODO: Allow specific (col, row) styles
-     * TODO: Allow text styles and colours to be applied
+     * TODO: Allow text styles and colours to be applied.
      *
      * @param $columnIndex
+     *
      * @return array
      */
-    private function getPhpSpreadsheetColumnStylesForColumn($columnIndex) {
+    private function getPhpSpreadsheetColumnStylesForColumn($columnIndex)
+    {
         $phpExcelStyleArray = [];
 
         $styleArray = $this->getColumnStylesForColumn($columnIndex);
@@ -561,11 +498,11 @@ class Builder
 
         // Alignment
         if (isset($styleArray['alignment'])) {
-            if ($styleArray['alignment'] === self::ALIGNMENT_CENTER) {
+            if (self::ALIGNMENT_CENTER === $styleArray['alignment']) {
                 $phpExcelStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_CENTER;
-            } else if ($styleArray['alignment'] === self::ALIGNMENT_LEFT) {
+            } elseif (self::ALIGNMENT_LEFT === $styleArray['alignment']) {
                 $phpExcelStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_LEFT;
-            } else if ($styleArray['alignment'] === self::ALIGNMENT_RIGHT) {
+            } elseif (self::ALIGNMENT_RIGHT === $styleArray['alignment']) {
                 $phpExcelStyleArray['alignment']['horizontal'] = Alignment::HORIZONTAL_RIGHT;
             }
         }
@@ -574,8 +511,8 @@ class Builder
             $phpExcelStyleArray['fill'] = [
                 'type' => Fill::FILL_SOLID,
                 'color' => [
-                    'rgb' => $styleArray['fill']
-                ]
+                    'rgb' => $styleArray['fill'],
+                ],
             ];
         }
 
@@ -602,8 +539,6 @@ class Builder
     }
 
     /**
-     * @param array $columnStyles
-     *
      * @return $this
      */
     public function setColumnStyles(array $columnStyles): self
@@ -615,7 +550,7 @@ class Builder
 
     public function hasSheets(): bool
     {
-        return count($this->sheets) > 0;
+        return \count($this->sheets) > 0;
     }
 
     public function setSheets(array $sheets): self
