@@ -29,10 +29,16 @@
         "webmozart/assert": "^1.9"
     },
     "require-dev": {
-        "ergebnis/composer-normalize": "^2.11",
-        "phpunit/phpunit": "^9.5"
+        "ergebnis/composer-normalize": "^2.13",
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "phpunit/phpunit": "^8.0",
+        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan-deprecation-rules": "^0.12",
+        "phpstan/phpstan-phpunit": "^0.12",
+        "phpstan/phpstan-strict-rules": "^0.12"
     },
     "config": {
+        "preferred-install": "dist",
         "sort-packages": true
     },
     "autoload": {
@@ -45,7 +51,5 @@
             "Iter8\\Builder\\Tests\\": "tests"
         }
     },
-    "scripts": {
-        "tests": "phpunit"
-    }
+    "minimum-stability": "dev"
 }

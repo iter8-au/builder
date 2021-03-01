@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Iter8\Builder\Builders;
 
-use Box\Spout\Common\Exception\UnsupportedTypeException;
-use Box\Spout\Common\Type;
-use Box\Spout\Writer\AbstractMultiSheetsWriter;
+use Box\Spout\Writer\WriterMultiSheetsAbstract;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
-use Box\Spout\Writer\Style\Color;
-use Box\Spout\Writer\Style\Style;
-use Box\Spout\Writer\Style\StyleBuilder;
-use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Entity\Style\Color;
+use Box\Spout\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Iter8\Builder\Interfaces\BuilderInterface;
 use Iter8\Builder\Traits\BuilderFilesTrait;
 use Iter8\Builder\Traits\InitialisationStateTrait;
@@ -25,7 +23,7 @@ class SpoutBuilder implements BuilderInterface
     use InitialisationStateTrait;
 
     /**
-     * @var AbstractMultiSheetsWriter
+     * @var WriterMultiSheetsAbstract
      */
     private $writer;
 
@@ -34,11 +32,7 @@ class SpoutBuilder implements BuilderInterface
      */
     public function __construct()
     {
-        try {
-            $this->writer = WriterFactory::create(Type::XLSX);
-        } catch (UnsupportedTypeException $e) {
-            // This should never happen.
-        }
+        $this->writer = WriterEntityFactory::createXLSXWriter();
     }
 
     /**

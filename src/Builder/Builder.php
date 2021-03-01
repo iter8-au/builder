@@ -613,21 +613,11 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function hasSheets(): bool
     {
-        $sheets = $this->sheets;
-
-        return !empty($sheets);
+        return count($this->sheets) > 0;
     }
 
-    /**
-     * @param array $sheets
-     *
-     * @return $this
-     */
     public function setSheets(array $sheets): self
     {
         $this->sheets = $sheets;
@@ -635,9 +625,6 @@ class Builder
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getSheets(): array
     {
         return $this->sheets;
