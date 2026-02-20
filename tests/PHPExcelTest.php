@@ -2,50 +2,29 @@
 
 namespace Builder\Tests;
 
+use Builder\Builder;
 use Builder\Builders\PhpSpreadsheet;
-use Builder\Interfaces\BuilderTestInterface;
-use Builder\Provider\Silex\BuilderServiceProvider;
-use Silex\Application;
-use PHPUnit_Framework_TestCase;
-use Box\Spout\Common\Helper\FileSystemHelper;
+use PHPUnit\Framework\TestCase;
 
-/**
- * Class PHPExcelTest
- */
-class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInterface
+class PHPExcelTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function builder_is_correct_builder()
+    public function test_builder_is_correct_builder(): void
     {
         // Arrange
-        $app = new Application();
-        $app['builder.default']   = 'phpexcel';
-        $app['builder.cache_dir'] = __DIR__ . '/cache/phpexcel';
-
-        // Act
-        $app->register(new BuilderServiceProvider());
+        $builder = $this->makeBuilder();
 
         // Assert
-        $this->assertInstanceOf(PhpSpreadsheet::class, $app['builder']->getBuilder());
+        $this->assertInstanceOf(PhpSpreadsheet::class, $builder->getBuilder());
     }
 
-    /**
-     * @test
-     */
-    public function can_create_single_sheet_spreadsheet()
+    public function test_can_create_single_sheet_spreadsheet(): void
     {
         // Arrange
-        $app = new Application();
-        $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpexcel',
-            'builder.cache_dir' => $this->getCacheDir(),
-        ]);
+        $builder = $this->makeBuilder();
 
         // Act
-        $app['builder']->setSheetTitles('PHPExcel Test');
-        $app['builder']->setData(
+        $builder->setSheetTitles('PHPExcel Test');
+        $builder->setData(
             [
                 [
                     'Column 1' => 'column_1',
@@ -64,35 +43,28 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
                 ],
             ]
         );
-        $app['builder']->generateExcel();
+        $builder->generateExcel();
 
-        $generatedExcelFile = $app['builder']->getTempName();
+        $generatedExcelFile = $builder->getTempName();
 
         // Assert
         $this->assertFileExists($generatedExcelFile);
         $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
     }
 
-    /**
-     * @test
-     */
-    public function can_create_multi_sheet_spreadsheet()
+    public function test_can_create_multi_sheet_spreadsheet(): void
     {
         // Arrange
-        $app = new Application();
-        $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpexcel',
-            'builder.cache_dir' => $this->getCacheDir(),
-        ]);
+        $builder = $this->makeBuilder();
 
         // Act
-        $app['builder']->setSheetTitles(
+        $builder->setSheetTitles(
             [
                 'Sheet 1 of 2',
                 'Sheet 2 of 2',
             ]
         );
-        $app['builder']->setSheets(
+        $builder->setSheets(
             [
                 [
                     [
@@ -112,19 +84,29 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
                 ],
             ]
         );
-        $app['builder']->generateExcel();
+        $builder->generateExcel();
 
-        $generatedExcelFile = $app['builder']->getTempName();
+        $generatedExcelFile = $builder->getTempName();
 
         // Assert
         $this->assertFileExists($generatedExcelFile);
         $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
     }
 
-    /**
-     * @return string
-     */
-    private function getCacheDir()
+    private function makeBuilder(): Builder
+    {
+        return new Builder(
+            $this->makePhpSpreadsheet(),
+            $this->getCacheDir()
+        );
+    }
+
+    private function makePhpSpreadsheet(): PhpSpreadsheet
+    {
+        return new PhpSpreadsheet();
+    }
+
+    public static function getCacheDir(): string
     {
         return __DIR__ . '/cache/phpexcel';
     }
@@ -132,24 +114,36 @@ class PHPExcelTest extends PHPUnit_Framework_TestCase implements BuilderTestInte
     /**
      * Create the cache folder required for testing.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
-        $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
-
-        if (is_dir(__DIR__ . '/cache/phpexcel') === false) {
-            $fileSystemHelper->createFolder(__DIR__ . '/cache', 'phpexcel');
+        if (is_dir(self::getCacheDir()) === false) {
+            mkdir(self::getCacheDir());
         }
     }
 
     /**
      * Remove the cache folder required for testing.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
-        $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
-
-        if (is_dir(__DIR__ . '/cache/phpexcel') === true) {
-            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpexcel');
+        if (is_dir(self::getCacheDir()) === true) {
+            self::removeTempFilesAndDirectory(self::getCacheDir());
         }
+    }
+
+    // @see https://stackoverflow.com/questions/3349753/delete-directory-with-files-in-it
+    public static function removeTempFilesAndDirectory(string $directory): void
+    {
+        $it = new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new \RecursiveIteratorIterator(
+            $it,
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+        foreach($files as $file) {
+            if ($file->getExtension() === 'tmp') {
+                unlink($file->getPathname());
+            }
+        }
+        rmdir($directory);
     }
 }

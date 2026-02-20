@@ -1,30 +1,14 @@
 # Builder
 
-A wrapper for the PHPExcel and Spout libraries to help you quickly build Excel reports.
-
-## Requirements
-
-- Silex ~2.x
+A wrapper for the PHPExcel library to help you quickly build Excel reports.
 
 ## Example Usage
 
 ```php
-$app['builder.default']   = 'spout'; // or 'phpexcel'
-$app['builder.cache_dir'] = '/var/cache';
-
-$app->register(new BuilderServiceProvider());
-// --- OR ---
-$app->register(
-    new BuilderServiceProvider(),
-    [
-        'builder.default'   => 'phpexcel',
-        'builder.cache_dir' => '/var/cache',
-    ]
+$builder = new Builder(
+    new \Builder\Builders\PhpSpreadsheet(),
+    '/var/cache',
 );
-```
-
-```php
-$builder = $app['builder'];
 
 $reportArray = [
     [
@@ -51,25 +35,6 @@ $builder->generate();
 // use generateExcel() to create the file.
 $builder->generateExcel();
 ```
-
-Both Builders are available under the `$app['builders']` key, but `$app['builder']` will be the default builder you specify.
-
-### PHPExcel
-Accessible via `$app['builders']['phpexcel']`.
-
-### Spout
-Accessible via `$app['builders']['spout']`.
-
-## Feature Parity
-Feature | PHPExcel | Spout
-------- | -------- | -----
-Cell Alignment | Yes | No
-Auto-sizing Columns | Yes | No
-Custom Column Widths | Yes | No
-Document Properties | Yes | No
-Header Styling | Yes | Yes
-Multiple Sheets | Yes | Yes
-
 
 ## Development
 

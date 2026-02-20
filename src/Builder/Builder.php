@@ -39,13 +39,13 @@ class Builder
      */
     private $data;
 
-    private $creator;
+    private $creator = 'builder';
 
-    private $title;
+    private $title = 'default';
 
     private $sheetTitles;
 
-    private $description;
+    private $description = '';
 
     private $filename;
 

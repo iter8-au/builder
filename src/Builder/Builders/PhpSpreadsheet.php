@@ -4,6 +4,7 @@ namespace Builder\Builders;
 
 use Builder\Traits\BuilderFilesTrait;
 use Builder\Interfaces\BuilderInterface;
+use PhpOffice\PhpSpreadsheet\Cell\CellAddress;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -221,17 +222,17 @@ class PhpSpreadsheet implements BuilderInterface
     public function buildHeaderRow($columns, $style = null)
     {
         // The row needs to start at 1 at the beginning of execution.
-        // The top left corner of the sheet is actually position (col = 0, row = 1).
+        // The top left corner of the sheet is actually position (col = 1, row = 1).
         $row    = 1;
-        $column = 0;
+        $column = 1;
 
         foreach (array_keys($columns) as $key) {
-            $this->builder->getActiveSheet()->setCellValueByColumnAndRow($column, $row, $key);
+            $this->builder->getActiveSheet()->setCellValue([$column, $row], $key);
 
             if (is_array($style)) {
                 $this->builder
                      ->getActiveSheet()
-                     ->getStyleByColumnAndRow($column, $row)
+                     ->getStyle([$column, $row])
                      ->applyFromArray($style);
             }
 
@@ -248,10 +249,10 @@ class PhpSpreadsheet implements BuilderInterface
      */
     public function buildRow($row, $style = null, $rowIndex = 1)
     {
-        $columnIndex = 0;
+        $columnIndex = 1;
 
         foreach ($row as $column) {
-            $this->builder->getActiveSheet()->setCellValueByColumnAndRow($columnIndex, $rowIndex, $column);
+            $this->builder->getActiveSheet()->setCellValue([$columnIndex, $rowIndex], $column);
 
             $columnIndex++;
         }
@@ -275,7 +276,7 @@ class PhpSpreadsheet implements BuilderInterface
 
         // If we have a header row then we need to bump the row index down one,
         // otherwise we'll overwrite the header (not ideal).
-        if ($this->builder->getActiveSheet()->cellExistsByColumnAndRow(0, $rowIndex)) {
+        if ($this->builder->getActiveSheet()->cellExists([1, $rowIndex])) {
             $rowIndex = 2;
         }
 
@@ -323,7 +324,7 @@ class PhpSpreadsheet implements BuilderInterface
 
         $columnCount = count($columns);
 
-        for ($columnIndex = 0; $columnIndex <= $columnCount; $columnIndex++) {
+        for ($columnIndex = 1; $columnIndex <= $columnCount; $columnIndex++) {
             $this->builder->getActiveSheet()->getColumnDimensionByColumn($columnIndex)->setAutoSize(true);
         }
     }
