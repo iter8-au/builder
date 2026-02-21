@@ -2,60 +2,39 @@
 
 namespace Tests\Builder;
 
-use Box\Spout\Common\Helper\FileSystemHelper;
+use Builder\Builder;
 use Builder\Builders\PhpSpreadsheet;
-use Builder\Interfaces\BuilderTestInterface;
-use Builder\Provider\Silex\BuilderServiceProvider;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PHPUnit\Framework\TestCase;
-use Silex\Application;
 
-/**
- * Class PHPExcelTest
- */
-class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
+class PHPSpreadsheetTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function builder_is_correct_builder()
+    public function test_builder_is_correct_builder()
     {
         // Arrange
-        $app = new Application();
-        $app['builder.default']   = 'phpspreadsheet';
-        $app['builder.cache_dir'] = __DIR__ . '/cache/phpspreadsheet';
-
-        // Act
-        $app->register(new BuilderServiceProvider());
+        $builder = $this->makeBuilder();
 
         // Assert
-        $this->assertInstanceOf(PhpSpreadsheet::class, $app['builder']->getBuilder());
+        $this->assertInstanceOf(PhpSpreadsheet::class, $builder->getBuilder());
     }
 
-    /**
-     * @test
-     */
-    public function can_create_single_sheet_spreadsheet()
+    public function test_can_create_single_sheet_spreadsheet()
     {
         // Arrange
-        $app = new Application();
-        $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpspreadsheet',
-            'builder.cache_dir' => $this->getCacheDir(),
-        ]);
+        $builder = $this->makeBuilder();
         $reader = new Xlsx();
         $reader->setReadDataOnly(true);
 
         // Act
-        $app['builder']->setSheetTitles('PHPExcel Test');
-        $app['builder']->setHeaders(
+        $builder->setSheetTitles('PHPExcel Test');
+        $builder->setHeaders(
             [
                 'Column 1',
                 'Column 2',
                 'Column 3',
             ]
         );
-        $app['builder']->setData(
+        $builder->setData(
             [
                 [
                     'column_1',
@@ -74,9 +53,9 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
                 ],
             ]
         );
-        $app['builder']->generateExcel();
+        $builder->generateExcel();
 
-        $generatedExcelFile = $app['builder']->getTempName();
+        $generatedExcelFile = $builder->getTempName();
         $sheet = $reader->load($generatedExcelFile);
         $sheetData = $sheet->getActiveSheet()->toArray(null, true, true, true);
         $headers = array_shift($sheetData);
@@ -106,26 +85,19 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
         $this->assertEquals('Three x 3', $row3['C']);
     }
 
-    /**
-     * @test
-     */
-    public function can_create_multi_sheet_spreadsheet()
+    public function test_can_create_multi_sheet_spreadsheet()
     {
         // Arrange
-        $app = new Application();
-        $app->register(new BuilderServiceProvider(), [
-            'builder.default'   => 'phpspreadsheet',
-            'builder.cache_dir' => $this->getCacheDir(),
-        ]);
+        $builder = $this->makeBuilder();
 
         // Act
-        $app['builder']->setSheetTitles(
+        $builder->setSheetTitles(
             [
                 'Sheet 1 of 2',
                 'Sheet 2 of 2',
             ]
         );
-        $app['builder']->setSheets(
+        $builder->setSheets(
             [
                 [
                     'headers' => [
@@ -157,19 +129,29 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
                 ],
             ]
         );
-        $app['builder']->generateExcel();
+        $builder->generateExcel();
 
-        $generatedExcelFile = $app['builder']->getTempName();
+        $generatedExcelFile = $builder->getTempName();
 
         // Assert
         $this->assertFileExists($generatedExcelFile);
         $this->assertGreaterThan(3000, stat($generatedExcelFile)['size']);
     }
 
-    /**
-     * @return string
-     */
-    private function getCacheDir()
+    private function makeBuilder(): Builder
+    {
+        return new Builder(
+            $this->makePhpSpreadsheet(),
+            $this->getCacheDir()
+        );
+    }
+
+    private function makePhpSpreadsheet(): PhpSpreadsheet
+    {
+        return new PhpSpreadsheet();
+    }
+
+    public static function getCacheDir(): string
     {
         return __DIR__ . '/cache/phpspreadsheet';
     }
@@ -177,24 +159,36 @@ class PHPSpreadsheetTest extends TestCase implements BuilderTestInterface
     /**
      * Create the cache folder required for testing.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
-        $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
-
-        if (is_dir(__DIR__ . '/cache/phpspreadsheet') === false) {
-            $fileSystemHelper->createFolder(__DIR__ . '/cache', 'phpspreadsheet');
+        if (is_dir(self::getCacheDir()) === false) {
+            mkdir(self::getCacheDir());
         }
     }
 
     /**
      * Remove the cache folder required for testing.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
-        $fileSystemHelper = new FileSystemHelper(__DIR__ . '/cache');
-
-        if (is_dir(__DIR__ . '/cache/phpspreadsheet') === true) {
-            $fileSystemHelper->deleteFolderRecursively(__DIR__ . '/cache/phpspreadsheet');
+        if (is_dir(self::getCacheDir()) === true) {
+            self::removeTempFilesAndDirectory(self::getCacheDir());
         }
+    }
+
+    // @see https://stackoverflow.com/questions/3349753/delete-directory-with-files-in-it
+    public static function removeTempFilesAndDirectory(string $directory): void
+    {
+        $it = new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new \RecursiveIteratorIterator(
+            $it,
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+        foreach($files as $file) {
+            if ($file->getExtension() === 'tmp') {
+                unlink($file->getPathname());
+            }
+        }
+        rmdir($directory);
     }
 }

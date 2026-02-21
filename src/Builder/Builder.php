@@ -51,12 +51,12 @@ class Builder
     /**
      * @var null|string
      */
-    private $creator;
+    private $creator = 'builder';
 
     /**
      * @var null|string
      */
-    private $title;
+    private $title = 'default';
 
     /**
      * @var array
@@ -66,7 +66,7 @@ class Builder
     /**
      * @var null|string
      */
-    private $description;
+    private $description = '';
 
     /**
      * @var null|string
